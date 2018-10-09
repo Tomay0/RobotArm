@@ -56,7 +56,6 @@ void setup() {
   }catch(Exception e) {
     e.printStackTrace();
   }
-  
 }
 
 void draw() {
@@ -68,5 +67,5 @@ void draw() {
       image(pencil,lines2[i][1].x,lines2[i][1].y);
     }
   }
-  t++;
+  t += 20;
 }
