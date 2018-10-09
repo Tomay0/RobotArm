@@ -90,6 +90,7 @@ public class RobotArm {
 
 
     public static void main(String[] args) {
-        new RobotArm();
+        new ImageProcess();
+        //new RobotArm();
     }
 }
