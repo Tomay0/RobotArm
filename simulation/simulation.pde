@@ -1,6 +1,6 @@
 PVector leftShoulderPos = new PVector(220, 350);
 PVector rightShoulderPos = new PVector(380, 350);
-float humerusLenght = 80; // humerusLenght = R
+float humerusLength = 80; // humerusLenght = R
 
 void setup(){
   size(600, 400);
@@ -20,38 +20,42 @@ void drawArms(float leftAngle, float rightAngle){
   PVector rightHandPos = new PVector();
   PVector leftHandPos = new PVector();
 
-  rightElbowPos.x = (float)sin(rightAngle) * humerusLenght;
-  rightElbowPos.y = (float)cos(rightAngle) * humerusLenght;
-  leftElbowPos.x = (float)sin(leftAngle) * humerusLenght;
-  leftElbowPos.y = (float)cos(leftAngle) * humerusLenght;
+  rightElbowPos.x = (float)sin(rightAngle) * humerusLength;
+  rightElbowPos.y = (float)cos(rightAngle) * humerusLength;
+  leftElbowPos.x = (float)sin(leftAngle) * humerusLength;
+  leftElbowPos.y = (float)cos(leftAngle) * humerusLength;
   
   rightElbowPos.add(rightShoulderPos);
   leftElbowPos.add(leftShoulderPos);
   
-  line(leftShoulderPos.x, leftShoulderPos.y, leftElbowPos.x, leftElbowPos.y);
-  line(rightShoulderPos.x, rightShoulderPos.y, rightElbowPos.x, rightElbowPos.y);
+  line(leftShoulderPos, leftElbowPos);
+  line(rightShoulderPos, rightElbowPos);
   
   float elbowToCenterDistance = leftElbowPos.dist(rightElbowPos) / 2;
   
-  if (elbowToCenterDistance > humerusLenght){
+  if (elbowToCenterDistance > humerusLength){
     text("to far apart", 10, 30);
     return;
   }
   
-  float angleBetweenElbowAndHand = acos(elbowToCenterDistance / humerusLenght);
+  float angleBetweenElbowAndHand = acos(elbowToCenterDistance / humerusLength);
   
   
   float RightHandAngle = -angleBetweenElbowAndHand + atan2((leftElbowPos.x - rightElbowPos.x), (leftElbowPos.y - rightElbowPos.y));
   float LeftHandAngle = angleBetweenElbowAndHand + atan2((rightElbowPos.x - leftElbowPos.x), (rightElbowPos.y - leftElbowPos.y));
   
-  rightHandPos.x = (float)sin(RightHandAngle) * humerusLenght;
-  rightHandPos.y = (float)cos(RightHandAngle) * humerusLenght;
-  leftHandPos.x = (float)sin(LeftHandAngle) * humerusLenght;
-  leftHandPos.y = (float)cos(LeftHandAngle) * humerusLenght;
+  rightHandPos.x = (float)sin(RightHandAngle) * humerusLength;
+  rightHandPos.y = (float)cos(RightHandAngle) * humerusLength;
+  leftHandPos.x = (float)sin(LeftHandAngle) * humerusLength;
+  leftHandPos.y = (float)cos(LeftHandAngle) * humerusLength;
   
-  rightHand.add(rightElbow);
-  leftHand.add(leftElbow);
+  rightHandPos.add(rightElbowPos);
+  leftHandPos.add(leftElbowPos);
   
-  line(leftElbow.x, leftElbow.y, leftHand.x, leftHand.y);
-  line(rightElbow.x, rightElbow.y, rightHand.x, rightHand.y);
+  line(leftElbowPos, leftHandPos);
+  line(rightElbowPos, rightHandPos);
+}
+
+void line(PVector a, PVector b){
+  line(a.x, a.y, b.x, b.y);
 }
