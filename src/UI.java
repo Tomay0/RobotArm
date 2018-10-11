@@ -88,6 +88,21 @@ public class UI extends JFrame{
 
     public static void main(String[] args) {
         new UI();
+        Point point = new Point(0,0);
+        int[] angles = point.calculateSignals();
+        System.out.println(angles[0] + ", " + angles[1]);
+
+        /*point = new Point(0,1);
+        angles = point.calculateSignals();
+        System.out.println(angles[0] + ", " + angles[1]);
+
+        point = new Point(1,0);
+        angles = point.calculateSignals();
+        System.out.println(angles[0] + ", " + angles[1]);
+
+        point = new Point(1,1);
+        angles = point.calculateSignals();
+        System.out.println(angles[0] + ", " + angles[1]);*/
         //new RobotArm();
     }
 
