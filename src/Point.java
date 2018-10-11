@@ -1,8 +1,11 @@
 public class Point {
+    /**
+     * basically a PVector with extra features
+     */
     private double x,y;
     private static final double humerusLength = 1;
     private static final double shoulderDistance = humerusLength / 2;
-    private static final double shoulderY = 1 + Math.pow(humerusLength, 2) - Math.pow(humerusLength - shoulderDistance / 2, 2);
+    private static final double shoulderY = 1 + Math.sqrt(Math.pow(humerusLength, 2) - Math.pow(humerusLength - shoulderDistance / 2, 2));
     private static final Point leftShoulderPos = new Point(0, shoulderY);
     private static final Point rightShoulderPos = new Point(shoulderDistance, shoulderY);
 
@@ -25,7 +28,7 @@ public class Point {
 
         // finding distance betwen midpoint and joint (aka 'h')
         float midToJointLeft = Math.sqrt(Math.pow(humerusLength, 2) - Math.pow(dist(leftShoulderPos) / 2, 2));
-        float midToJointRight = Math.sqrt(Math.pow(humerusLength,2 ) - Math.pow(dist(rightShoulderPos) / 2, 2));
+        float midToJointRight = Math.sqrt(Math.pow(humerusLength, 2) - Math.pow(dist(rightShoulderPos) / 2, 2));
 
         // finding angle between hand and joint (aka 'a')
         float angleFromMidToJointLeft = Math.acos((leftShoulderPos.x - pos.x) / dist(leftShoulderPos));
@@ -47,6 +50,11 @@ public class Point {
         return angles;
     }
 
+    /**
+     * returns the distance between its self and anouther point
+     * @param otherPoint
+     * @return
+     */
     public double dist(Point otherPoint){
         return Math.sqrt(Math.pow(x - otherPoint.x, 2) + Math.pow(x - otherPoint.x, 2));
     }
