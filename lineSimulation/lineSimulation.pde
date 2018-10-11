@@ -9,7 +9,7 @@ PImage pencil;
 int t = 0;
 
 void setup() {
-  size(800,600);
+  size(1000,800);
   frameRate(144);
   pencil = loadImage("pencil.png");
   try {
@@ -60,12 +60,16 @@ void setup() {
 
 void draw() {
   background(255);
-  stroke(0);
+  colorMode(HSB);
+  stroke(0,255,255);
+  
+  
   for(int i = 0;i<t && i<lines2.length;i++) {
+    stroke(i%255,255,255);
     line(lines2[i][0].x,lines2[i][0].y,lines2[i][1].x,lines2[i][1].y);
     if(i==t-1) {
       image(pencil,lines2[i][1].x,lines2[i][1].y);
     }
   }
-  t += 20;
+  t += 200;
 }

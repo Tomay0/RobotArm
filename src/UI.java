@@ -56,13 +56,13 @@ public class UI extends JFrame{
             if(status != openFileChooser.APPROVE_OPTION){
                 System.out.println("No file selected");
             }else{
-                try {
-                    ImageProcess.load();//Need to make load static?
+                /*try {
+                    //ImageProcess.load();//Need to make load static?
 
                 }catch(IOException e){
                     e.printStackTrace();
                     System.out.println("Could not load image");
-                }
+                }*/
             }
         }
     }
@@ -74,17 +74,21 @@ public class UI extends JFrame{
             if(status != saveFileChooser.APPROVE_OPTION){
                 System.out.println("No file selected");
             }else{
-                try{
+                /*try{
                     ImageProcess.saveLines(); //Need to make saveLines static?
                 }catch(IOException e){
                     e.printStackTrace();
                     System.out.println("Unable to save!");
 
-                }
+                }*/
 
             }
         }
     }
 
+    public static void main(String[] args) {
+        new UI();
+        //new RobotArm();
+    }
 
 }

@@ -87,10 +87,4 @@ public class RobotArm {
         rightArm = (int)(2450-right*10);
         print();
     }
-
-
-    public static void main(String[] args) {
-        new ImageProcess();
-        //new RobotArm();
-    }
 }

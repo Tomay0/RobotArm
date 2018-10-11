@@ -9,12 +9,12 @@ import java.util.*;
 import java.util.List;
 
 public class ImageProcess {
-    private static final int THRESHOLD = 150;//threshold for detecting edges
+    private static final int THRESHOLD = 100;//threshold for detecting edges
     private int width,height;
 
     private int[][] pixels;
     private int[][] edgeValues;
-    private List<List<Point>> lines;
+    private Drawing drawing;
 
     /**
      * Process an image
@@ -25,8 +25,8 @@ public class ImageProcess {
         try {
             load(scan.next());
             findEdgeValues();
-            findLines();
-            saveLines("lineSimulation/data/lines.txt");
+            drawing = createDrawing();
+            drawing.saveLines("lineSimulation/data/lines.txt");
         }catch(Exception e) {
             System.out.println("Could not load an image from that file.");
         }
@@ -79,10 +79,10 @@ public class ImageProcess {
     }
 
     /**
-     * Find lines in the edges
+     * Find lines in the edges and make the drawing
      */
-    public void findLines() {
-        lines = new ArrayList<>();
+    public Drawing createDrawing() {
+        Drawing drawing = new Drawing();
         //loop
         for(int y = 0;y<height;y++) {
             for(int x =0;x<width;x++) {
@@ -101,25 +101,11 @@ public class ImageProcess {
                         nearMaxEdge = getNearestEdgeMax((int)nearMaxEdge.getX(),(int)nearMaxEdge.getY());//find next pixel
                     }
                     //put the line into the list
-                    lines.add(line);
+                    drawing.addLine(line);
                 }
             }
         }
-    }
-
-    /**
-     * Save all lines to a file
-     */
-    public void saveLines(String fileName) throws FileNotFoundException {
-        PrintWriter writer = new PrintWriter(new File(fileName));
-        for(List<Point> line : lines) {
-            for(Point p : line) {
-               writer.print(p.getX() + "," + p.getY() + " ");
-            }
-            writer.println();
-        }
-        writer.flush();
-        writer.close();
+        return drawing;
     }
 
     /**

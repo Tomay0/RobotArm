@@ -1,9 +1,18 @@
 PVector leftShoulderPos = new PVector(220, 350);
 PVector rightShoulderPos = new PVector(380, 350);
 float humerusLength = 150; // humerusLenght = R
+float imageWidth;
+PVector topLeft;
+
 
 void setup(){
-  size(600, 400);
+  size(500, 500);
+  float shoulderDist = rightShoulderPos.x - leftShoulderPos.x;
+  float shoulderDistScaled = 0.6 * shoulderDist;
+  float offset = (shoulderDist-shoulderDistScaled)/2;
+  float y = sqrt(sq(humerusLength) - sq(humerusLength - shoulderDist/2));
+  imageWidth = shoulderDistScaled;
+  topLeft = new PVector(leftShoulderPos.x+offset, leftShoulderPos.y-y-shoulderDist+offset);
 }
 
 
@@ -16,8 +25,10 @@ void draw(){
   ellipse(mouseX, mouseY, humerusLength * 2, humerusLength * 2);
   
   stroke(255);
+  float w = imageWidth * mouseX/width;
+  float h = imageWidth * mouseY/height;
   
-  float[] armAngles = calculateAngle(new PVector(mouseX, mouseY));
+  float[] armAngles = calculateAngle(new PVector(topLeft.x+w,topLeft.y+h));
   //drawArms((float)mouseX / 50, (float)mouseY / 50);
   drawArms(armAngles[0], armAngles[1]);
   //drawArms(PI, PI);
