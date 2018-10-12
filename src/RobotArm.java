@@ -74,7 +74,6 @@ public class RobotArm {
         double x2 = -Math.sin(shoulderSlant) * midShoulderToPointDist;
 
 
-
         //double angle = Math.acos((d/2)/1);
         double x = x2+shoulderMidX;
         double y = y2+shoulderMidY;

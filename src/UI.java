@@ -1,3 +1,5 @@
+import sun.jvm.hotspot.utilities.soql.JSList;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,12 +8,15 @@ import java.io.IOException;
 
 public class UI extends JFrame{
     JFrame mainFrame = new JFrame();
-    JPanel menuPanel; //holds buttons and sliders
+    JPanel menuPanel; //holds buttons and
+    //JSlider thresholdSlider;
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 800;
     private static final int MENU_PANEL_WIDTH = FRAME_WIDTH / 5;
     private static final int MENU_PANEL_HEIGHT = FRAME_HEIGHT;
+    private ImageProcess imageProcess;
     public UI(){
+        imageProcess  = new ImageProcess();
 
         Container container = getContentPane();
         setLayout(new BorderLayout());
@@ -30,10 +35,11 @@ public class UI extends JFrame{
         /*Adding the menuPanel to mainFrame - menuPanel will hold most of the interaction*/
         container.add(menuPanel, BorderLayout.WEST); //Menu panel to the left of window
 
-        createButtons();
+
+        setupMenuPanel();
     }
 
-    public void createButtons(){
+    public void setupMenuPanel(){
 
         /*JButton objects*/
         JButton openFileButton = new JButton("Open File");
@@ -46,6 +52,10 @@ public class UI extends JFrame{
         /*Adding to menuPanel*/
         menuPanel.add(openFileButton);
         menuPanel.add(saveFileButton);
+
+        JSlider thresholdSlider = new JSlider();
+        menuPanel.add(thresholdSlider);
+
     }
 
     private class OpenButtonListener implements ActionListener {
@@ -56,13 +66,13 @@ public class UI extends JFrame{
             if(status != openFileChooser.APPROVE_OPTION){
                 System.out.println("No file selected");
             }else{
-                /*try {
-                    //ImageProcess.load();//Need to make load static?
-
+                try {
+                    String fileName = openFileChooser.getName();
+                    imageProcess.load(fileName);
                 }catch(IOException e){
                     e.printStackTrace();
-                    System.out.println("Could not load image");
-                }*/
+                    System.out.println("Could not load file!");
+                }
             }
         }
     }
@@ -74,13 +84,17 @@ public class UI extends JFrame{
             if(status != saveFileChooser.APPROVE_OPTION){
                 System.out.println("No file selected");
             }else{
-                /*try{
-                    ImageProcess.saveLines(); //Need to make saveLines static?
+                /*
+                try{
+                    String fileNameSave = saveFileChooser.getName();
+                    System.out.println("happienss is an illusion");
                 }catch(IOException e){
                     e.printStackTrace();
                     System.out.println("Unable to save!");
 
-                }*/
+                }
+                */
+                System.out.println("Happiness is an illusion");
 
             }
         }
@@ -91,6 +105,8 @@ public class UI extends JFrame{
         Point point = new Point(0,0);
         int[] angles = point.calculateSignals();
         System.out.println(angles[0] + ", " + angles[1]);
+
+
 
         /*point = new Point(0,1);
         angles = point.calculateSignals();
