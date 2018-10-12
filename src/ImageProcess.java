@@ -124,7 +124,25 @@ public class ImageProcess {
      * Scales the image correctly in the drawing space
      */
     private Point scale(double x, double y) {
-        return new Point(x/width,y/height-0.2);
+        double xLeft = -0.4;
+        double yTop = -1.4;
+        double size = 1.8;
+
+        double xScaled = x;
+        double yScaled = y;
+
+        if(width>height) {
+            xScaled/=width;
+            yScaled/=width;
+        }else{
+            xScaled/=height;
+            yScaled/=height;
+        }
+        xScaled*=size;
+        yScaled*=size;
+        xScaled+=xLeft;
+        yScaled+=yTop;
+        return new Point(xScaled,yScaled);
     }
 
     /**
