@@ -6,6 +6,43 @@ import java.util.List;
 
 public class Drawing {
     private List<List<Point>> lines = new ArrayList<>();
+    private static final int PEN_DOWN = 900;
+    private static final int PEN_UP = 800;
+
+    private static final int left0degrees = 1775;
+    private static final int right0degrees = 1260;
+    private static final int leftGradient = 200/22;
+    private static final int rightGradient = 200/20;
+
+    private boolean penDown;
+    private int leftArm;//control signal values
+    private int rightArm;
+    PrintWriter writer;
+
+    public Drawing() {
+        penDown = false;
+        leftArm = 0;
+        rightArm = 0;
+        writer = null;
+    }
+
+    public void print() {
+        writer.println(leftArm + "," + rightArm + "," + (penDown ? PEN_DOWN : PEN_UP));
+    }
+
+
+
+    public void setPenDown(boolean pen) {
+        this.penDown = pen;
+        print();
+    }
+
+    public void movePenTo(Point p) {
+        double[] angles = p.calculateAngles();
+        leftArm = (int) (left0degrees + Math.toDegrees(angles[0])*leftGradient);
+        rightArm = (int) (right0degrees + Math.toDegrees(angles[1])*rightGradient);
+        print();
+    }
 
     /**
      * Adds an arbitrary line to the list
@@ -18,22 +55,45 @@ public class Drawing {
     /**
      * Adds a horizontal line to the list
      */
-    public void addHorizontalLine() {
-        
+    public void line(double x1, double y1, double x2, double y2) {
+        List<Point> points = new ArrayList<>();
+        for(double t = 0;t<=1;t+=0.1) {
+            points.add(new Point(x1 * (1-t) + x2 * t,y1 * (1-t) + y2 * t));
+        }
+        lines.add(points);
+    }
+
+    public void randomBounds(double x1, double y1, double width, double height) {
+        List<Point> points = new ArrayList<>();
+        for(int i = 0;i<1000;i++) {
+            points.add(new Point(x1 + width * Math.random(), y1 + height*Math.random()));
+        }
+        lines.add(points);
     }
 
     /**
      * Save all lines to a file
      */
-    public void saveLines(String fileName) throws FileNotFoundException {
-        PrintWriter writer = new PrintWriter(new File(fileName));
-        for(List<Point> line : lines) {
+    public void saveLines(String fileName) {
+        try {
+            writer = new PrintWriter(new File(fileName));
+        /*for(List<Point> line : lines) {
             for(Point p : line) {
                 writer.print(p.getX() + "," + p.getY() + " ");
             }
             writer.println();
+        }*/
+            for(List<Point> line : lines) {//go through all lines
+                for (int i = 0;i<line.size();i++) {
+                    movePenTo(line.get(i));//move pen to correct location
+                    if(i==0) setPenDown(true);//set pen down after moving the first time
+                }
+                setPenDown(false);//lift pen up
+            }
+            writer.flush();
+            writer.close();
+        }catch(Exception e) {
+            e.printStackTrace();
         }
-        writer.flush();
-        writer.close();
     }
 }

@@ -1,4 +1,3 @@
-import sun.jvm.hotspot.utilities.soql.JSList;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +15,10 @@ public class UI extends JFrame{
     private static final int MENU_PANEL_HEIGHT = FRAME_HEIGHT;
     private ImageProcess imageProcess;
     public UI(){
-        imageProcess  = new ImageProcess();
+        imageProcess  = null;
+        Drawing drawing = new Drawing();
+        drawing.randomBounds(-0.2,-0.2,1,1);
+        drawing.saveLines("testUno.txt");
 
         Container container = getContentPane();
         setLayout(new BorderLayout());
@@ -68,7 +70,7 @@ public class UI extends JFrame{
             }else{
                 try {
                     String fileName = openFileChooser.getName();
-                    imageProcess.load(fileName);
+                    imageProcess = new ImageProcess(fileName);
                 }catch(IOException e){
                     e.printStackTrace();
                     System.out.println("Could not load file!");
@@ -102,24 +104,6 @@ public class UI extends JFrame{
 
     public static void main(String[] args) {
         new UI();
-        Point point = new Point(0,0);
-        int[] angles = point.calculateSignals();
-        System.out.println(angles[0] + ", " + angles[1]);
-
-
-
-        /*point = new Point(0,1);
-        angles = point.calculateSignals();
-        System.out.println(angles[0] + ", " + angles[1]);
-
-        point = new Point(1,0);
-        angles = point.calculateSignals();
-        System.out.println(angles[0] + ", " + angles[1]);
-
-        point = new Point(1,1);
-        angles = point.calculateSignals();
-        System.out.println(angles[0] + ", " + angles[1]);*/
-        //new RobotArm();
     }
 
 }
