@@ -15,6 +15,7 @@ public class ImageProcess {
     private int[][] pixels;
     private int[][] edgeValues;
     private Drawing drawing;
+    private BufferedImage originalImg = null;
 
     /**
      * Process an image
@@ -30,19 +31,23 @@ public class ImageProcess {
         }
     }
 
+    public BufferedImage getOriginalImg(){
+        return originalImg;
+    }
+
     /**
      * Load black and white pixels from an image to array
      */
     public void load(String fileName) throws IOException {
-        BufferedImage image = ImageIO.read(new File(fileName));
-        width = image.getWidth();
-        height = image.getHeight();
+        originalImg = ImageIO.read(new File(fileName));
+        width = originalImg.getWidth();
+        height = originalImg.getHeight();
 
         //load pixels array of all the luminosities at each pixel
         pixels = new int[width][height];
         for(int x = 0;x<width;x++) {
             for(int y = 0;y<height;y++) {
-                pixels[x][y] = getLuminosity(new Color(image.getRGB(x,y)));
+                pixels[x][y] = getLuminosity(new Color(originalImg.getRGB(x,y)));
             }
         }
     }

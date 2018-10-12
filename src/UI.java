@@ -7,7 +7,11 @@ import java.io.IOException;
 
 public class UI extends JFrame{
     JFrame mainFrame = new JFrame();
-    JPanel menuPanel; //holds buttons and
+    //JPanel menuPanel; //holds buttons and
+    JMenuBar menuBar = new JMenuBar();
+    JMenu menu = new JMenu("File");
+    JMenuItem openMenuItem, saveMenuItem, saveTestMenuItem = new JMenuItem();
+
     //JSlider thresholdSlider;
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 800;
@@ -21,47 +25,51 @@ public class UI extends JFrame{
         drawing.saveLines("testUno.txt");
 
         Container container = getContentPane();
+
+        /*Setup of window*/
         setLayout(new BorderLayout());
         setTitle("Image Processing");
         setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         /*menuPanel setup*/
+        /*
         menuPanel = new JPanel();
         menuPanel.setPreferredSize(new Dimension(MENU_PANEL_WIDTH, MENU_PANEL_HEIGHT));
         menuPanel.setVisible(true);
         menuPanel.setBackground(Color.white);
         menuPanel.setBorder(BorderFactory.createTitledBorder("Menu"));
+        */
 
         /*Adding the menuPanel to mainFrame - menuPanel will hold most of the interaction*/
-        container.add(menuPanel, BorderLayout.WEST); //Menu panel to the left of window
+        //container.add(menuPanel, BorderLayout.WEST); //Menu panel to the left of window
+        container.add(menuBar, BorderLayout.NORTH);
+        menuBar.add(menu);
+        setupMenuBarItems();
 
-
-        setupMenuPanel();
         setVisible(true);
     }
 
-    public void setupMenuPanel(){
+    public void setupMenuBarItems(){
 
-        /*JButton objects*/
-        JButton openFileButton = new JButton("Open File");
-        JButton saveFileButton = new JButton("Save File");
+        openMenuItem = new JMenuItem("Open");
+        saveMenuItem = new JMenuItem("Save");
+        saveTestMenuItem = new JMenuItem("Save Test");
 
         /*Adding listeners to the buttons*/
-        openFileButton.addActionListener(new OpenButtonListener());
-        saveFileButton.addActionListener(new SaveButtonListener());
+        openMenuItem.addActionListener(new OpenButtonListener());
+        saveMenuItem.addActionListener(new SaveButtonListener());
 
         /*Adding to menuPanel*/
-        menuPanel.add(openFileButton);
-        menuPanel.add(saveFileButton);
-
-        JSlider thresholdSlider = new JSlider();
-        menuPanel.add(thresholdSlider);
+        menu.add(openMenuItem);
+        menu.add(saveMenuItem);
+        menu.add(saveTestMenuItem);
 
     }
 
     private class OpenButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event){
+
             JFileChooser openFileChooser = new JFileChooser();
             int status = openFileChooser.showOpenDialog(null); //Prompting user to open a file
             /*Checks if a file was selected*/
