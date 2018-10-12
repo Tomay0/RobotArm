@@ -13,18 +13,17 @@ public class UI extends JFrame{
     private static final int FRAME_HEIGHT = 800;
     private static final int MENU_PANEL_WIDTH = FRAME_WIDTH / 5;
     private static final int MENU_PANEL_HEIGHT = FRAME_HEIGHT;
-    private ImageProcess imageProcess;
+    private ImageProcess currentImage;
     public UI(){
-        imageProcess  = null;
+        currentImage  = null;
         Drawing drawing = new Drawing();
-        drawing.randomBounds(-0.2,-0.2,1,1);
+        drawing.drawRect(-0.4,-1.4,1.8,1.8);
         drawing.saveLines("testUno.txt");
 
         Container container = getContentPane();
         setLayout(new BorderLayout());
         setTitle("Image Processing");
         setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
-        setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         /*menuPanel setup*/
@@ -39,6 +38,7 @@ public class UI extends JFrame{
 
 
         setupMenuPanel();
+        setVisible(true);
     }
 
     public void setupMenuPanel(){
@@ -67,43 +67,36 @@ public class UI extends JFrame{
             /*Checks if a file was selected*/
             if(status != openFileChooser.APPROVE_OPTION){
                 System.out.println("No file selected");
+
             }else{
-                try {
-                    String fileName = openFileChooser.getName();
-                    imageProcess = new ImageProcess(fileName);
-                }catch(IOException e){
-                    e.printStackTrace();
-                    System.out.println("Could not load file!");
-                }
+                String fileName = openFileChooser.getName(openFileChooser.getSelectedFile());
+                currentImage = new ImageProcess(fileName);
             }
         }
     }
 
     private class SaveButtonListener implements ActionListener{
         public void actionPerformed(ActionEvent event){
+            if(currentImage==null) {
+                System.out.println("you haven't opened an image.");
+            }
             JFileChooser saveFileChooser = new JFileChooser();
             int status = saveFileChooser.showSaveDialog(null); //Prompting user to open a file
             if(status != saveFileChooser.APPROVE_OPTION){
                 System.out.println("No file selected");
             }else{
-                /*
-                try{
-                    String fileNameSave = saveFileChooser.getName();
-                    System.out.println("happienss is an illusion");
-                }catch(IOException e){
-                    e.printStackTrace();
-                    System.out.println("Unable to save!");
-
+                String fileNameSave = saveFileChooser.getName(saveFileChooser.getSelectedFile());
+                if(!currentImage.save(fileNameSave)) {
+                    System.out.println("Could not save");
                 }
-                */
-                System.out.println("Happiness is an illusion");
+
 
             }
         }
     }
 
     public static void main(String[] args) {
-        new UI();
+        UI ui = new UI();
     }
 
 }

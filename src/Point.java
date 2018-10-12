@@ -30,7 +30,7 @@ public class Point {
     /**
      * Get the angles that the robot arms should be set to given a point
      */
-    public double[] calculateAngles(){
+    public double[] calculateAngles() throws IllegalArgumentException{
 
         // █▀▀▄ █▀▀█ █▀▀▄ ▀▀█▀▀   ▀▀█▀▀ █▀▀█ █░░█ █▀▀ █░░█ █
         // █░░█ █░░█ █░░█ ░░█░░   ░░█░░ █░░█ █░░█ █░░ █▀▀█ ▀
@@ -40,8 +40,7 @@ public class Point {
         double[] angles = new double[2];
 
         if (dist(leftShoulderPos) > 2 * humerusLength || dist(rightShoulderPos) > 2 * humerusLength){
-            System.out.println("not in range");
-            return angles;
+            throw new IllegalArgumentException("The point " + this + " is out of range! OOPS!");
         }
         // finding mid points (aka 'A')
         Point midLeft = new Point((x + leftShoulderPos.x) / 2, (y + leftShoulderPos.y) / 2);

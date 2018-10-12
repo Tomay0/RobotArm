@@ -55,11 +55,30 @@ public class Drawing {
     /**
      * Adds a horizontal line to the list
      */
-    public void line(double x1, double y1, double x2, double y2) {
+    public void drawLine(double x1, double y1, double x2, double y2) {
+        lines.add(getLine(x1,y1,x2,y2,10));
+    }
+
+    /**
+     * Returns a list of points that make a line.
+     */
+    public List<Point> getLine(double x1, double y1, double x2, double y2, int subdivisions) {
         List<Point> points = new ArrayList<>();
-        for(double t = 0;t<=1;t+=0.1) {
+        for(double t = 0;t<=1;t+=1.0/subdivisions) {
             points.add(new Point(x1 * (1-t) + x2 * t,y1 * (1-t) + y2 * t));
         }
+        return points;
+    }
+
+    /**
+     * Draws a rectangle
+     */
+    public void drawRect(double x1, double y1, double width, double height) {
+        List<Point> points = new ArrayList<>();
+        points.addAll(getLine(x1,y1,x1+width,y1,30));
+        points.addAll(getLine(x1+width,y1,x1+width,y1+height,30));
+        points.addAll(getLine(x1+width,y1+height,x1,y1+height,30));
+        points.addAll(getLine(x1,y1+height,x1,y1,30));
         lines.add(points);
     }
 

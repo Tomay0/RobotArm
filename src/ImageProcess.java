@@ -19,15 +19,13 @@ public class ImageProcess {
     /**
      * Process an image
      */
-    public ImageProcess() {
-        System.out.print("Enter file: ");
-        Scanner scan = new Scanner(System.in);
+    public ImageProcess(String fileName) {
         try {
-            load(scan.next());
+            load(fileName);
             findEdgeValues();
             drawing = createDrawing();
-            drawing.saveLines("lineSimulation/data/lines.txt");
         }catch(Exception e) {
+            e.printStackTrace();
             System.out.println("Could not load an image from that file.");
         }
     }
@@ -83,29 +81,50 @@ public class ImageProcess {
      */
     public Drawing createDrawing() {
         Drawing drawing = new Drawing();
-        //loop
-        for(int y = 0;y<height;y++) {
-            for(int x =0;x<width;x++) {
-                if(edgeValues[x][y]>THRESHOLD) {
-                    edgeValues[x][y] = 0;//get rid of pixel
+        try {
+            //loop
+            for(int y = 0;y<height;y++) {
+                for(int x =0;x<width;x++) {
+                    if(edgeValues[x][y]>THRESHOLD) {
+                        edgeValues[x][y] = 0;//get rid of pixel
 
-                    //start of line
-                    List<Point> line = new ArrayList<>();
-                    line.add(new Point(x,y));
+                        //start of line
+                        List<Point> line = new ArrayList<>();
+                        line.add(scale(x,y));
 
-                    //keep adding points to line that surround until none are greater than the threshold
-                    Point nearMaxEdge = getNearestEdgeMax(x,y);
-                    while(edgeValues[(int)nearMaxEdge.getX()][(int)nearMaxEdge.getY()] > THRESHOLD) {
-                        edgeValues[(int)nearMaxEdge.getX()][(int)nearMaxEdge.getY()] = 0;//get rid of pixel
-                        line.add(nearMaxEdge);//add point to line
-                        nearMaxEdge = getNearestEdgeMax((int)nearMaxEdge.getX(),(int)nearMaxEdge.getY());//find next pixel
+                        //keep adding points to line that surround until none are greater than the threshold
+                        Point nearMaxEdge = getNearestEdgeMax(x,y);
+                        while(edgeValues[(int)nearMaxEdge.getX()][(int)nearMaxEdge.getY()] > THRESHOLD) {
+                            edgeValues[(int)nearMaxEdge.getX()][(int)nearMaxEdge.getY()] = 0;//get rid of pixel
+                            line.add(scale(nearMaxEdge.getX(),nearMaxEdge.getY()));//add point to line
+                            nearMaxEdge = getNearestEdgeMax((int)nearMaxEdge.getX(),(int)nearMaxEdge.getY());//find next pixel
+                        }
+                        //put the line into the list
+                        drawing.addLine(line);
                     }
-                    //put the line into the list
-                    drawing.addLine(line);
                 }
             }
+            //System.out.println("done! :) I love you.");
+        }catch(Exception e) {
+            drawing = null;
+            e.printStackTrace();
         }
         return drawing;
+    }
+
+    public boolean save(String fileName) {
+        if(drawing!=null) {
+            drawing.saveLines(fileName);
+            //drawing.saveLinesTest(fileName);
+        }
+        return drawing!=null;
+    }
+
+    /**
+     * Scales the image correctly in the drawing space
+     */
+    private Point scale(double x, double y) {
+        return new Point(x/width,y/height-0.2);
     }
 
     /**
