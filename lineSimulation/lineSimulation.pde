@@ -9,13 +9,13 @@ PImage pencil;
 int t = 0;
 
 void setup() {
-  //size(1000,800);
-  fullScreen();
+  size(1000,800);
+  //fullScreen();
   frameRate(144);
   pencil = loadImage("pencil.png");
   try {
     //scan to find all lines
-    Scanner scan = new Scanner(new File(dataPath("howard 2.txt")));
+    Scanner scan = new Scanner(new File(dataPath("test.txt")));
     int nLines = 0;
     while(scan.hasNextLine()) {
       String lineString = scan.nextLine();
@@ -60,20 +60,18 @@ void setup() {
 }
 
 void draw() {
-  scale(5, 3);
+  translate(100,300);
+  scale(200, 200);
   background(0);
-  strokeWeight(2/3);
-  colorMode(HSB);
-  stroke(0);
-  stroke(0,255,255);
-  
+  strokeWeight(0.005);
+  stroke(255);
   
   for(int i = 0;i<t && i<lines2.length;i++) {
-    stroke(i%255,255,150);
+    //stroke(i%255,255,150);
     line(lines2[i][0].x,lines2[i][0].y,lines2[i][1].x,lines2[i][1].y);
     if(i==t-1) {
-      image(pencil,lines2[i][1].x,lines2[i][1].y);
+      //image(pencil,lines2[i][1].x,lines2[i][1].y);
     }
   }
-  t += 200;
+  t += 20;
 }

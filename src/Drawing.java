@@ -115,4 +115,23 @@ public class Drawing {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Save all lines to a file
+     */
+    public void saveLinesTest(String fileName) {
+        try {
+            writer = new PrintWriter(new File(fileName));
+            for(List<Point> line : lines) {
+                for (Point p : line) {
+                    writer.print(p.getX() + "," + p.getY() + " ");
+                }
+                writer.println();
+            }
+            writer.flush();
+            writer.close();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
