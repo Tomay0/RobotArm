@@ -22,7 +22,7 @@ public class UI extends JFrame{
         currentImage  = null;
         Drawing drawing = new Drawing();
         //drawing.drawRect(-0.4,-1.4,1.8,1.8);
-        drawing.drawCircle(0.5, 0.5, 0.5);
+        drawing.drawCircle(0, 0, 0.5);
         drawing.saveLinesTest("testUno.txt");
 
         Container container = getContentPane();

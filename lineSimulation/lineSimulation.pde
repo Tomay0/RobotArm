@@ -60,10 +60,10 @@ void setup() {
 }
 
 void draw() {
-  //translate(100,300);
-  scale(200, 200);
+  translate(100,100);
+  scale(600, 600);
   background(0);
-  strokeWeight(0.005);
+  strokeWeight(1 / 600);
   stroke(255);
   
   for(int i = 0;i<t && i<lines2.length;i++) {
