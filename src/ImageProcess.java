@@ -125,6 +125,14 @@ public class ImageProcess {
         return drawing!=null;
     }
 
+    public boolean saveTest(String fileName){
+        if(drawing!=null) {
+            drawing.saveLinesTest(fileName);
+        }
+        return drawing!=null;
+
+    }
+
     /**
      * Scales the image correctly in the drawing space
      */
