@@ -21,8 +21,9 @@ public class UI extends JFrame{
     public UI(){
         currentImage  = null;
         Drawing drawing = new Drawing();
-        drawing.drawRect(-0.4,-1.4,1.8,1.8);
-        drawing.saveLines("testUno.txt");
+        //drawing.drawRect(-0.4,-1.4,1.8,1.8);
+        drawing.drawCircle(0.5, 0.5, 0.5);
+        drawing.saveLinesTest("testUno.txt");
 
         Container container = getContentPane();
 

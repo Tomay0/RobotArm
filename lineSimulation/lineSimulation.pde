@@ -15,7 +15,7 @@ void setup() {
   pencil = loadImage("pencil.png");
   try {
     //scan to find all lines
-    Scanner scan = new Scanner(new File(dataPath("test.txt")));
+    Scanner scan = new Scanner(new File(dataPath("circle.txt")));
     int nLines = 0;
     while(scan.hasNextLine()) {
       String lineString = scan.nextLine();

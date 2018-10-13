@@ -82,6 +82,35 @@ public class Drawing {
         lines.add(points);
     }
 
+    /**
+     * Draws a circle
+     */
+    public void drawCircle(double x1, double y1, double radius) {
+        List<Point> points = new ArrayList<>();
+        // getting center
+        double centerX = x1 + radius;
+        double centerY = y1 + radius;
+
+        // the last point in the circle initially set to the top
+        double preX = centerX;
+        double preY = centerY + radius;
+
+        double currentX;
+        double currentY;
+
+        for (double rot = 0; rot < 2 * Math.PI; rot += (2 * Math.PI) / 100){
+
+            currentX = Math.sin(rot) * radius + centerX;
+            currentY = Math.cos(rot) * radius + centerY;
+
+            points.addAll(getLine(preX, preY, currentX, currentY,1));
+
+            preX = currentX;
+            preY = currentY;
+        }
+        lines.add(points);
+    }
+
     public void randomBounds(double x1, double y1, double width, double height) {
         List<Point> points = new ArrayList<>();
         for(int i = 0;i<1000;i++) {
