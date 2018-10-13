@@ -60,7 +60,7 @@ void setup() {
 }
 
 void draw() {
-  translate(100,300);
+  //translate(100,300);
   scale(200, 200);
   background(0);
   strokeWeight(0.005);

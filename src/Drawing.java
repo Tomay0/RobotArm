@@ -88,12 +88,12 @@ public class Drawing {
     public void drawCircle(double x1, double y1, double radius) {
         List<Point> points = new ArrayList<>();
         // getting center
-        double centerX = x1 + radius;
-        double centerY = y1 + radius;
+        double centerX = x1 - radius;
+        double centerY = y1 - radius;
 
         // the last point in the circle initially set to the top
         double preX = centerX;
-        double preY = centerY + radius;
+        double preY = centerY - radius;
 
         double currentX;
         double currentY;
