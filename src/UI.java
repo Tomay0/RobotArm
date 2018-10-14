@@ -12,29 +12,10 @@ import java.util.*;
 import java.awt.Color;
 
 public class UI extends JFrame{
-    JFrame mainFrame = new JFrame();
-    private JPanel menuPanel; //holds buttons and other stuff (tbd)
-    private JPanel displayPanel; //Will display simulation and other things (tbd)
-    private JTextArea textOutputArea; //Will display text output to indicate that an action has been performed
-    private JMenuBar menuBar = new JMenuBar();
-    private JMenu fileMenu = new JMenu("File");
-    private JMenu customizeMenu = new JMenu("Customize");
-    private JMenu simMenu = new JMenu("Simulation");
-    private JMenuItem openMenuItem, saveMenuItem, saveTestMenuItem, darkThemeMenuItem, lightThemeMenuItem, runSimMenuItem = new JMenuItem();
-    private JScrollPane textOutputAreaScroll;
-    private Simulation sim;
-
-    /*Border titles*/
-    String menuBorderTitle = "Menu";
-    String displayBorderTitle = "Happiness is an illusion";
-    String textOutBorderTitle = "Text output";
-
-    String openedImgFileName = "";
-    private Set<JPanel> panelSet = new HashSet<>();
-
-    JSlider thresholdSlider;
-
-    /*Sizes of the components - All are related back to FRAME_WIDTH and FRAME_HEIGHT in some way*/
+    //SOME CONSTANTS
+    private static final String menuBorderTitle = "Menu";
+    private static final String displayBorderTitle = "Happiness is an illusion";
+    private static final String textOutBorderTitle = "Text output";
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 800;
     private static final int MENU_PANEL_WIDTH = FRAME_WIDTH / 5;
@@ -44,14 +25,38 @@ public class UI extends JFrame{
     private static final int TEXT_OUT_PANEL_WIDTH = DISPLAY_PANEL_WIDTH;
     private static final int TEXT_OUT_PANEL_HEIGHT = DISPLAY_PANEL_HEIGHT/5;
 
+    //UI STUFF
+    private JPanel menuPanel; //holds buttons and other stuff (tbd)
+    private JPanel displayPanel; //Will display simulation and other things (tbd)
+    private JTextArea textOutputArea; //Will display text output to indicate that an action has been performed
+    private JMenuBar menuBar = new JMenuBar();
+    private JMenu fileMenu = new JMenu("File");
+    private JMenu customizeMenu = new JMenu("Customize");
+    private JMenu simMenu = new JMenu("Simulation");
+    private JMenuItem openMenuItem, saveMenuItem, saveTestMenuItem, darkThemeMenuItem, lightThemeMenuItem, runSimMenuItem = new JMenuItem();
+    private JScrollPane textOutputAreaScroll;
+    private Set<JPanel> panelSet = new HashSet<>();
+    private JSlider thresholdSlider;
+
+
+    //MAIN ROBOT ARM STUFF
     private ImageProcess currentImage;
     private Drawing drawing;
+    private Simulation simulation;
+
+
+    /**
+     * Initialise the UI
+     */
     public UI(){
         currentImage  = null;
-        Drawing drawing = new Drawing();
-        drawing.drawRect(-0.4,-1.4,1.8,1.8);
-        drawing.saveLines("testUno.txt");
-
+        drawing = null;
+        simulation = null;
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         Container container = getContentPane();
 
         /*Setup of window*/
@@ -103,6 +108,9 @@ public class UI extends JFrame{
         setVisible(true);
     }
 
+    /**
+     * Init menu
+     */
     public void setupMenuBarItems(){
 
         /*For file menu*/
@@ -152,70 +160,83 @@ public class UI extends JFrame{
 
     }
 
+    /*
+    * Open an image
+    */
     private class OpenButtonListener implements ActionListener{
         public void actionPerformed(ActionEvent event){
 
             JFileChooser openFileChooser = new JFileChooser();
+            openFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
             int status = openFileChooser.showOpenDialog(null); //Prompting user to open a file
             /*Checks if a file was selected*/
             if(status != openFileChooser.APPROVE_OPTION){
-                System.out.println("No file selected");
+                textOutputArea.append("No file selected\n");
 
             }else{
-                String fileName = openFileChooser.getName(openFileChooser.getSelectedFile());
-                openedImgFileName = fileName;
-                currentImage = new ImageProcess(fileName); //Processing the opened image
-                textOutputArea.append("\nloaded file: " + fileName);
+                //Open
+                File file = openFileChooser.getSelectedFile();
+                currentImage = new ImageProcess(file); //Processing the opened image
+                if(currentImage.getDrawing()==null) {//check open of the image was ok
+                    currentImage = null;
+                    textOutputArea.append("Unable to read image data from the file you picked.\n");
+                }else{
+                    //Load successful
+                    drawing = currentImage.getDrawing();
 
-                /*Getting image to display onto menuPanel*/
-                try {
-                    BufferedImage openedImg = ImageIO.read(new File(fileName));
+                    textOutputArea.append("loaded file: " + file.getName() + "\n");
+
+                    /*Getting image to display onto menuPanel*/
+                    BufferedImage openedImg = currentImage.getOriginalImg();
                     JLabel pic = new JLabel(new ImageIcon(openedImg));
                     menuPanel.add(pic);
-
-                }catch(IOException e){
-                    e.printStackTrace();
-                    System.out.println("Could not load that file!");
-
+                    revalidate();
                 }
             }
         }
     }
 
+    /**
+     * Save a drawing
+     */
     private class SaveButtonListener implements ActionListener{
         public void actionPerformed(ActionEvent event){
             if(currentImage==null) {
-                System.out.println("you haven't opened an image.");
+                textOutputArea.append("you haven't opened an image.\n");
             }
             JFileChooser saveFileChooser = new JFileChooser();
+            saveFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
             int status = saveFileChooser.showSaveDialog(null); //Prompting user to open a file
             if(status != saveFileChooser.APPROVE_OPTION){
-                System.out.println("No file selected");
+                textOutputArea.append("No file selected\n");
             }else{
-                String fileNameSave = saveFileChooser.getName(saveFileChooser.getSelectedFile());
-                currentImage.save(fileNameSave);
-                if(!currentImage.save(fileNameSave)) {
-                    System.out.println("Could not save");
+                //Save
+                File f = saveFileChooser.getSelectedFile();
+                if(!currentImage.save(f)) {
+                    textOutputArea.append("Could not save\n");
                 }
             }
         }
     }
 
+    /**
+     * Save a drawing (TEST)
+     */
     private class SaveTestButtonListener implements ActionListener{
         public void actionPerformed(ActionEvent event){
             if(currentImage == null){
-                System.out.println("You have not opened an image");
+                textOutputArea.append("You have not opened an image\n");
             }
             JFileChooser saveTestFileChooser = new JFileChooser();
+            saveTestFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
             int status = saveTestFileChooser.showSaveDialog(null);
             if(status != saveTestFileChooser.APPROVE_OPTION){
-                System.out.println("Save cancelled");
+                textOutputArea.append("Save cancelled\n");
             }else{
-                String fileNameSaveTest = saveTestFileChooser.getName(saveTestFileChooser.getSelectedFile());
-                currentImage.saveTest(fileNameSaveTest);
-                if(!currentImage.saveTest(fileNameSaveTest)){
-                    System.out.println("Could not save test file");
-
+                //Save
+                File f = saveTestFileChooser.getSelectedFile();
+                if(!currentImage.saveTest(f)){
+                    textOutputArea.append("Could not save test file\n");
                 }
             }
         }
@@ -266,15 +287,14 @@ public class UI extends JFrame{
     private class RunSimListener implements ActionListener{
         public void actionPerformed(ActionEvent event){
             if(currentImage == null){
-                textOutputArea.append("\nCan not run simulation: no image has been opened");
+                textOutputArea.append("Can not run simulation: no image has been opened\n");
+            }else{
+                simulation = new Simulation(drawing);
             }
-            sim = new Simulation(openedImgFileName);
-            sim.commenceSim();
         }
     }
 
     public static void main(String[] args) {
         UI ui = new UI();
-        System.out.println("help");
     }
 }

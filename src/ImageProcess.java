@@ -8,38 +8,46 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Represents an image processed to find edges
+ */
 public class ImageProcess {
+    private static final double X_LEFT = -0.4;//minimum x the image will be drawn from
+    private static final double Y_TOP = -1.4;//minimum y the image will be drawn from
+    private static final double SIZE = 1.8;//maximum size of the image (width or height)
+
     private static final int THRESHOLD = 100;//threshold for detecting edges
+
     private int width,height;
 
-    private int[][] pixels;
-    private int[][] edgeValues;
-    private Drawing drawing;
-    private BufferedImage originalImg = null;
+    private int[][] pixels;//black and white image
+    private int[][] edgeValues;//image of edge values
+    private Drawing drawing;//drawing with list of lines that can be converted to control signals
+
+    private BufferedImage originalImg = null;//image of the original
+    private BufferedImage edgeImg = null;//image of the edges
 
     /**
      * Process an image
      */
-    public ImageProcess(String fileName) {
+    public ImageProcess(File file) {
         try {
-            load(fileName);
-            findEdgeValues();
-            drawing = createDrawing();
+            load(file);//load image
+            findEdgeValues();//find edges
+            drawing = createDrawing();//find lines and create drawing
         }catch(Exception e) {
             e.printStackTrace();
+            drawing = null;
             System.out.println("Could not load an image from that file.");
         }
     }
 
-    public BufferedImage getOriginalImg(){
-        return originalImg;
-    }
-
     /**
-     * Load black and white pixels from an image to array
+     * Loads an image from the file
+     * Puts luminosity values of all the pixels into the pixels[][] array.
      */
-    public void load(String fileName) throws IOException {
-        originalImg = ImageIO.read(new File(fileName));
+    public void load(File file) throws IOException {
+        originalImg = ImageIO.read(file);
         width = originalImg.getWidth();
         height = originalImg.getHeight();
 
@@ -53,7 +61,8 @@ public class ImageProcess {
     }
 
     /**
-     * Find edges in the image
+     * Go through all pixels in the image and get the edge values
+     * The higher the number the sharper the edge
      */
     public void findEdgeValues() {
         //find edges
@@ -82,7 +91,7 @@ public class ImageProcess {
     }
 
     /**
-     * Find lines in the edges and make the drawing
+     * Find lines in the image and make a drawing
      */
     public Drawing createDrawing() {
         Drawing drawing = new Drawing();
@@ -117,30 +126,11 @@ public class ImageProcess {
         return drawing;
     }
 
-    public boolean save(String fileName) {
-        if(drawing!=null) {
-            drawing.saveLines(fileName);
-            //drawing.saveLinesTest(fileName);
-        }
-        return drawing!=null;
-    }
-
-    public boolean saveTest(String fileName){
-        if(drawing!=null) {
-            drawing.saveLinesTest(fileName);
-        }
-        return drawing!=null;
-
-    }
 
     /**
      * Scales the image correctly in the drawing space
      */
     private Point scale(double x, double y) {
-        double xLeft = -0.4;
-        double yTop = -1.4;
-        double size = 1.8;
-
         double xScaled = x;
         double yScaled = y;
 
@@ -151,10 +141,10 @@ public class ImageProcess {
             xScaled/=height;
             yScaled/=height;
         }
-        xScaled*=size;
-        yScaled*=size;
-        xScaled+=xLeft;
-        yScaled+=yTop;
+        xScaled*=SIZE;
+        yScaled*=SIZE;
+        xScaled+=X_LEFT;
+        yScaled+=Y_TOP;
         return new Point(xScaled,yScaled);
     }
 
@@ -184,5 +174,35 @@ public class ImageProcess {
      */
     private int getLuminosity(Color color) {
         return (int)(0.2126*color.getRed() + 0.7152*color.getGreen() + 0.0722*color.getBlue());
+    }
+
+    /**
+     * Saves the drawing
+     */
+    public boolean save(File file) {
+        if(drawing!=null) {
+            drawing.saveLines(file);
+        }
+        return drawing!=null;
+    }
+
+    /*
+    Testing save drawing
+     */
+    public boolean saveTest(File file){
+        if(drawing!=null) {
+            drawing.saveLinesTest(file);
+        }
+        return drawing!=null;
+
+    }
+
+    /**Get Original Image*/
+    public BufferedImage getOriginalImg(){
+        return originalImg;
+    }
+    /**Get drawing*/
+    public Drawing getDrawing(){
+        return drawing;
     }
 }

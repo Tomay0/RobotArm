@@ -1,5 +1,7 @@
 /**
- * Point defines a point on the paper, where the square (0,0),(1,0),(0,1),(1,1) is guaranteed to let the robot arm draw there
+ * 2D point
+ *
+ * Can convert to angles
  *
  */
 public class Point {

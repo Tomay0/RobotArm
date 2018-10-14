@@ -2,140 +2,82 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents several lines separated by pen up/pen down movements.
+ * Contains methods for saving to a file that can be loaded by the robot arm program
+ */
 public class Drawing {
+    //CONSTANTS
+    private static final int PEN_DOWN = 900;//motor signal for pen down
+    private static final int PEN_UP = 800;//motor signal for pen up
+    private static final int left0degrees = 1775;//motor signal for 0 degrees on the left arm (90 in the program)
+    private static final int right0degrees = 1260;//motor signal for 0 degrees on the right arm (90 in the program)
+    private static final int leftGradient = 200/22;//linear gradient for the left arm
+    private static final int rightGradient = 200/20;//linear gradient for the right arm
+
+    //THE DRAWING
+    //list of lines
     private List<List<Point>> lines = new ArrayList<>();
-    private static final int PEN_DOWN = 900;
-    private static final int PEN_UP = 800;
 
-    private static final int left0degrees = 1775;
-    private static final int right0degrees = 1260;
-    private static final int leftGradient = 200/22;
-    private static final int rightGradient = 200/20;
+    //FILE WRITING
+    private boolean penDown;//whether the pen should be currently down
+    private int leftArm;//left control signal
+    private int rightArm;//right control signal
+    PrintWriter writer;//file to write to
 
-    private boolean penDown;
-    private int leftArm;//control signal values
-    private int rightArm;
-    PrintWriter writer;
+    //FILTER
+    private int minLineLength;//minimum length of a line
 
+    /**
+     * Initialises an empty drawing
+     */
     public Drawing() {
         penDown = false;
         leftArm = 0;
         rightArm = 0;
         writer = null;
+        minLineLength = 2;
     }
 
+    /**
+     * Prints to the file the current motor signals
+     */
     public void print() {
         writer.println(leftArm + "," + rightArm + "," + (penDown ? PEN_DOWN : PEN_UP));
     }
 
-
-
+    /**
+     * Changes if the pen is up or down
+     */
     public void setPenDown(boolean pen) {
         this.penDown = pen;
         print();
     }
 
+    /**
+     * Moves the pen to a point
+     * Angles are calculated, then motors signals are calculated
+     */
     public void movePenTo(Point p) {
-        double[] angles = p.calculateAngles();
+        double[] angles = p.calculateAngles();//calculate angles
+
+        //calculate motor signals
         leftArm = (int) (left0degrees + Math.toDegrees(angles[0])*leftGradient);
         rightArm = (int) (right0degrees + Math.toDegrees(angles[1])*rightGradient);
         print();
     }
 
     /**
-     * Adds an arbitrary line to the list
+     * Save all control signals to a file
      */
-    public void addLine(List<Point> line) {
-        if(line.size()>1) {
-            lines.add(line);
-        }
-    }
-    /**
-     * Adds a horizontal line to the list
-     */
-    public void drawLine(double x1, double y1, double x2, double y2) {
-        lines.add(getLine(x1,y1,x2,y2,10));
-    }
-
-    /**
-     * Returns a list of points that make a line.
-     */
-    public List<Point> getLine(double x1, double y1, double x2, double y2, int subdivisions) {
-        List<Point> points = new ArrayList<>();
-        for(double t = 0;t<=1;t+=1.0/subdivisions) {
-            points.add(new Point(x1 * (1-t) + x2 * t,y1 * (1-t) + y2 * t));
-        }
-        return points;
-    }
-
-    /**
-     * Draws a rectangle
-     */
-    public void drawRect(double x1, double y1, double width, double height) {
-        List<Point> points = new ArrayList<>();
-        points.addAll(getLine(x1,y1,x1+width,y1,30));
-        points.addAll(getLine(x1+width,y1,x1+width,y1+height,30));
-        points.addAll(getLine(x1+width,y1+height,x1,y1+height,30));
-        points.addAll(getLine(x1,y1+height,x1,y1,30));
-        lines.add(points);
-    }
-
-    /**
-     * Draws a circle
-     */
-    public void drawCircle(double x1, double y1, double radius) {
-        List<Point> points = new ArrayList<>();
-        // getting center
-        double centerX = x1 + radius;
-        double centerY = y1 + radius;
-
-        //System.out.println("center: " + centerX + ", " + centerY);
-
-        // the last point in the circle
-        double preX = centerX;
-        double preY = centerY + radius;
-
-        double currentX;
-        double currentY;
-
-        // starts from bottom and goes anti-clockwise
-        for (double rot = 0; rot < 2 * Math.PI; rot += (2 * Math.PI) / 100){
-
-            currentX = Math.sin(rot) * radius + centerX;
-            currentY = Math.cos(rot) * radius + centerY;
-            //System.out.println("point at: " + currentX + ", " + currentY);
-
-            points.addAll(getLine(preX, preY, currentX, currentY,1));
-
-            preX = currentX;
-            preY = currentY;
-        }
-        lines.add(points);
-    }
-
-    public void randomBounds(double x1, double y1, double width, double height) {
-        List<Point> points = new ArrayList<>();
-        for(int i = 0;i<1000;i++) {
-            points.add(new Point(x1 + width * Math.random(), y1 + height*Math.random()));
-        }
-        lines.add(points);
-    }
-
-    /**
-     * Save all lines to a file
-     */
-    public void saveLines(String fileName) {
+    public void saveLines(File file) {
         try {
-            writer = new PrintWriter(new File(fileName));
-        /*for(List<Point> line : lines) {
-            for(Point p : line) {
-                writer.print(p.getX() + "," + p.getY() + " ");
-            }
-            writer.println();
-        }*/
+            writer = new PrintWriter(file);
             for(List<Point> line : lines) {//go through all lines
+                if(line.size()<minLineLength) continue;//don't include lines less than the minimum line length
                 for (int i = 0;i<line.size();i++) {
                     movePenTo(line.get(i));//move pen to correct location
                     if(i==0) setPenDown(true);//set pen down after moving the first time
@@ -150,11 +92,11 @@ public class Drawing {
     }
 
     /**
-     * Save all lines to a file
+     * Save all lines to a file (for testing)
      */
-    public void saveLinesTest(String fileName) {
+    public void saveLinesTest(File file) {
         try {
-            writer = new PrintWriter(new File(fileName));
+            writer = new PrintWriter(file);
             for(List<Point> line : lines) {
                 for (Point p : line) {
                     writer.print(p.getX() + "," + p.getY() + " ");
@@ -167,4 +109,86 @@ public class Drawing {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Draws a line
+     */
+    public void drawLine(double x1, double y1, double x2, double y2) {
+        lines.add(getLine(x1,y1,x2,y2,10));
+    }
+
+    /**
+     * Draws a rectangle
+     */
+    public void drawRect(double x1, double y1, double width, double height, int subdivisions) {
+        List<Point> points = new ArrayList<>();
+        points.addAll(getLine(x1,y1,x1+width,y1,subdivisions));
+        points.addAll(getLine(x1+width,y1,x1+width,y1+height,subdivisions));
+        points.addAll(getLine(x1+width,y1+height,x1,y1+height,subdivisions));
+        points.addAll(getLine(x1,y1+height,x1,y1,subdivisions));
+        lines.add(points);
+    }
+
+    /**
+     * Draws a circle
+     */
+    public void drawCircle(double x1, double y1, double radius, int subdivisions) {
+        List<Point> points = new ArrayList<>();
+        // getting center
+        double centerX = x1 + radius;
+        double centerY = y1 + radius;
+
+        //System.out.println("center: " + centerX + ", " + centerY);
+
+        //current position in the circle
+        double currentX;
+        double currentY;
+
+        // starts from bottom and goes anti-clockwise
+        for (double rot = 0; rot < 2 * Math.PI; rot += (2 * Math.PI) / subdivisions){
+
+            currentX = Math.sin(rot) * radius + centerX;
+            currentY = Math.cos(rot) * radius + centerY;
+            //System.out.println("point at: " + currentX + ", " + currentY);
+
+            points.add(new Point(currentX,currentY));
+        }
+        lines.add(points);
+    }
+
+    /**
+     * Returns a list of points that make a line with different amounts of subdivisions.
+     */
+    public List<Point> getLine(double x1, double y1, double x2, double y2, int subdivisions) {
+        List<Point> points = new ArrayList<>();
+        for(double t = 0;t<=1;t+=1.0/subdivisions) {
+            points.add(new Point(x1 * (1-t) + x2 * t,y1 * (1-t) + y2 * t));
+        }
+        return points;
+    }
+
+    ////////GETTERS AND SETTERS///////
+
+
+    /**
+     * Adds a line to the list
+     */
+    public void addLine(List<Point> line) {
+        if(line.size()>1) {
+            lines.add(line);
+        }
+    }
+
+    /**
+     * List of all lines
+     */
+    public List<List<Point>> getLines() {
+        return Collections.unmodifiableList(lines);
+    }
+
+    /**Get Minimum line length*/
+    public int getMinLineLength() {return minLineLength;}
+
+    /**Set Minimum line length*/
+    public void setMinLineLength(int minLineLength) {this.minLineLength = minLineLength;}
 }
