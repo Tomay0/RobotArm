@@ -2,7 +2,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
- * Simulates drawing the
+ * Simulates drawing the image
  */
 public class Simulation {
     private BufferedImage simulatedImage;//image of the lines being drawn

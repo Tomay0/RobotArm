@@ -38,7 +38,6 @@ public class UI extends JFrame{
     private Set<JPanel> panelSet = new HashSet<>();
     private JSlider thresholdSlider;
 
-
     //MAIN ROBOT ARM STUFF
     private ImageProcess currentImage;
     private Drawing drawing;
@@ -156,8 +155,6 @@ public class UI extends JFrame{
 
     public void setupDisplayScreen(){
 
-
-
     }
 
     /*
@@ -183,13 +180,29 @@ public class UI extends JFrame{
                 }else{
                     //Load successful
                     drawing = currentImage.getDrawing();
-
                     textOutputArea.append("loaded file: " + file.getName() + "\n");
 
                     /*Getting image to display onto menuPanel*/
+                    menuPanel.removeAll(); //Clears the panel of the image
                     BufferedImage openedImg = currentImage.getOriginalImg();
-                    JLabel pic = new JLabel(new ImageIcon(openedImg));
+                    /* Potential scaling stuff
+                    int scaleX = MENU_PANEL_WIDTH/openedImg.getWidth();
+                    int scaleY = MENU_PANEL_HEIGHT/openedImg.getHeight();
+                    int newWidth = openedImg.getWidth() * scaleX;
+                    System.out.println(newWidth);
+                    int newHeight = openedImg.getHeight() * scaleY;
+                    System.out.println(newHeight);
+                    JLabel pic = new JLabel(new ImageIcon(openedImg.getScaledInstance(newWidth, newHeight, Image.SCALE_FAST)));
+                    */
+                    JLabel pic = new JLabel(new ImageIcon(openedImg.getScaledInstance(MENU_PANEL_WIDTH - 10, 200, Image.SCALE_FAST))); //Temporary forced scaling
+
+                    /*Setting the orientation of the label below the icon*/
+                    pic.setHorizontalTextPosition(JLabel.CENTER);
+                    pic.setVerticalTextPosition(JLabel.BOTTOM);
+                    pic.setText("happiness is a joke"); //Label
+
                     menuPanel.add(pic);
+                    menuPanel.updateUI(); //Reshowing panel components
                     revalidate();
                 }
             }
