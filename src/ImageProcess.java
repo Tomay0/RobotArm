@@ -2,9 +2,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 import java.util.List;
 
@@ -12,9 +10,9 @@ import java.util.List;
  * Represents an image processed to find edges
  */
 public class ImageProcess {
-    private static final double X_LEFT = -0.4;//minimum x the image will be drawn from
-    private static final double Y_TOP = -1.4;//minimum y the image will be drawn from
-    private static final double SIZE = 1.8;//maximum size of the image (width or height)
+    public static final double X_LEFT = -0.4;//minimum x the image will be drawn from
+    public static final double Y_TOP = -1.4;//minimum y the image will be drawn from
+    public static final double SIZE = 1.8;//maximum size of the image (width or height)
 
     private static final int THRESHOLD = 100;//threshold for detecting edges
 
@@ -22,7 +20,6 @@ public class ImageProcess {
 
     private int[][] pixels;//black and white image
     private int[][] edgeValues;//image of edge values
-    private Drawing drawing;//drawing with list of lines that can be converted to control signals
 
     private BufferedImage originalImg = null;//image of the original
     private BufferedImage edgeImg = null;//image of the edges
@@ -34,11 +31,10 @@ public class ImageProcess {
         try {
             load(file);//load image
             findEdgeValues();//find edges
-            drawing = createDrawing();//find lines and create drawing
         }catch(Exception e) {
             e.printStackTrace();
-            drawing = null;
-            System.out.println("Could not load an image from that file.");
+            originalImg = null;
+            edgeImg = null;
         }
     }
 
@@ -67,6 +63,8 @@ public class ImageProcess {
     public void findEdgeValues() {
         //find edges
         edgeValues = new int[width][height];
+        edgeImg = new BufferedImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
+
         for(int y = 0;y<height;y++) {
             for(int x =0;x<width;x++) {
                 //indices of left/right bottom/top. This is to avoid checking pixels outside edges of the screen
@@ -80,12 +78,16 @@ public class ImageProcess {
                         -2 * pixels[left][y] + 2 * pixels[right][y] +
                         -1 * pixels[left][bottom] + 1 * pixels[right][bottom];
 
+
                 //horizontal edges
                 int horizontal = 1 * pixels[left][top] + 2 * pixels[x][top] + 1 * pixels[right][top] +
                         -1 * pixels[left][bottom] + -2 * pixels[x][bottom] + -1 * pixels[right][bottom];
 
                 //combine
                 edgeValues[x][y] = (int)Math.sqrt(vertical * vertical + horizontal * horizontal);
+
+                int edgeGrayValue = (int)Math.min(255,edgeValues[x][y]);
+                edgeImg.setRGB(x,y,new Color(edgeGrayValue,edgeGrayValue,edgeGrayValue).getRGB());
             }
         }
     }
@@ -118,10 +120,8 @@ public class ImageProcess {
                     }
                 }
             }
-            //System.out.println("done! :) I love you.");
         }catch(Exception e) {
             drawing = null;
-            e.printStackTrace();
         }
         return drawing;
     }
@@ -176,33 +176,15 @@ public class ImageProcess {
         return (int)(0.2126*color.getRed() + 0.7152*color.getGreen() + 0.0722*color.getBlue());
     }
 
-    /**
-     * Saves the drawing
-     */
-    public boolean save(File file) {
-        if(drawing!=null) {
-            drawing.saveLines(file);
-        }
-        return drawing!=null;
-    }
-
-    /*
-    Testing save drawing
-     */
-    public boolean saveTest(File file){
-        if(drawing!=null) {
-            drawing.saveLinesTest(file);
-        }
-        return drawing!=null;
-
-    }
-
     /**Get Original Image*/
     public BufferedImage getOriginalImg(){
         return originalImg;
     }
-    /**Get drawing*/
-    public Drawing getDrawing(){
-        return drawing;
+    /**Get Edge Image*/
+    public BufferedImage getEdgeImg(){
+        return edgeImg;
     }
+
+    /**Tells you if the image loaded correctly*/
+    public boolean isLoaded() {return originalImg!=null;}
 }

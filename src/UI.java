@@ -24,6 +24,7 @@ public class UI extends JFrame implements ActionListener{
     private static final int DISPLAY_PANEL_HEIGHT = FRAME_HEIGHT;
     private static final int TEXT_OUT_PANEL_WIDTH = DISPLAY_PANEL_WIDTH;
     private static final int TEXT_OUT_PANEL_HEIGHT = DISPLAY_PANEL_HEIGHT/5;
+    private static final int SIMULATION_SIZE = 400;
 
     //UI STUFF
     private JPanel menuPanel; //holds buttons and other stuff (tbd)
@@ -51,7 +52,6 @@ public class UI extends JFrame implements ActionListener{
     public UI(){
         currentImage  = null;
         drawing = null;
-        simulation = null;
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }catch(Exception e) {
@@ -86,7 +86,7 @@ public class UI extends JFrame implements ActionListener{
         textOutputArea.setBackground(Color.white);
         textOutputArea.setBorder(BorderFactory.createTitledBorder(textOutBorderTitle));
         textOutputArea.setEditable(false); //Prevents user from typing into text area
-        textOutputArea.setText("H E L P  M E");
+        textOutputArea.setText("H E L P  M E\n");
         textOutputAreaScroll = new JScrollPane(textOutputArea); //Adds the panel to the scroll pane - enables scrolling of the panel
         textOutputAreaScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED); //Only allows scrolling when needed
 
@@ -95,6 +95,12 @@ public class UI extends JFrame implements ActionListener{
         container.add(menuBar, BorderLayout.NORTH); //Menu bar on top
         container.add(displayPanel, BorderLayout.EAST);
         container.add(textOutputAreaScroll, BorderLayout.SOUTH);
+
+        //Simulation
+        simulation = new Simulation(this,SIMULATION_SIZE);
+        JLabel simLabel = new JLabel(new ImageIcon(simulation.getImage()));
+        displayPanel.add(simLabel);
+        new Thread(simulation).start();
 
         /*Adding panels to set*/
         panelSet.add(menuPanel);
@@ -115,8 +121,8 @@ public class UI extends JFrame implements ActionListener{
     public void setupMenuBarItems(){
 
         /*For file menu*/
-        openMenuItem = new JMenuItem("Open");
-        saveMenuItem = new JMenuItem("Save");
+        openMenuItem = new JMenuItem("Open Image");
+        saveMenuItem = new JMenuItem("Save Drawing");
         saveTestMenuItem = new JMenuItem("Save Test");
 
         /*For useless functionality*/
@@ -187,48 +193,27 @@ public class UI extends JFrame implements ActionListener{
 
     }
 
+    /**
+     * Click event
+     */
     public void actionPerformed(ActionEvent event){
-
-        if(event.getActionCommand().equals("Open")){
-            openFile();
-
-        }else if(event.getActionCommand().equals("Save")){
-            saveFile();
-
-        }else if(event.getActionCommand().equals("Save Test")){
-            saveTest();
-
-        }else if(event.getActionCommand().equals("Enable Dark Theme")){
-            System.out.println("Dark theme");
-            enableDarkTheme();
-
-        }else if(event.getActionCommand().equals("Enable Light Theme")){
-            enableLightTheme();
-
-        }else if(event.getActionCommand().equals("Run Sim")){
-            runSim();
-
-        }else if(event.getActionCommand().equals("Draw Circle")){
-
-
-        }else if(event.getActionCommand().equals("Draw Horizontal Line")){
-
-
-        }else if(event.getActionCommand().equals("Draw Vertical Line")){
-
-
-        }else if(event.getActionCommand().equals("Draw Word")){
-
-
-        }else if(event.getActionCommand().equals("Enable Socialist Theme")){
-            enableSocialistTheme();
-
-        }
-
-
-
+        String command = event.getActionCommand();
+        if(command.equals("Open"))openFile();
+        else if(command.equals("Save"))saveFile();
+        else if(command.equals("Save Test"))saveTest();
+        else if(command.equals("Enable Dark Theme"))enableDarkTheme();
+        else if(command.equals("Enable Light Theme")) enableLightTheme();
+        else if(command.equals("Enable Socialist Theme"))enableSocialistTheme();
+        else if(command.equals("Run Sim"))runSim();
+        else if(command.equals("Draw Circle")){}
+        else if(command.equals("Draw Horizontal Line")){}
+        else if(command.equals("Draw Vertical Line")){}
+        else if(command.equals("Draw Word")){}
     }
 
+    /**
+     * Opens an image
+     */
     public void openFile(){
         JFileChooser openFileChooser = new JFileChooser();
         openFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -241,27 +226,32 @@ public class UI extends JFrame implements ActionListener{
             //Open
             File file = openFileChooser.getSelectedFile();
             currentImage = new ImageProcess(file); //Processing the opened image
-            if(currentImage.getDrawing()==null) {//check open of the image was ok
+            if(!currentImage.isLoaded()) {//check open of the image was ok
                 currentImage = null;
                 textOutputArea.append("Unable to read image data from the file you picked.\n");
             }else{
                 //Load successful
-                drawing = currentImage.getDrawing();
+                drawing = currentImage.createDrawing();//turn into drawing
+                simulation.setDrawing(drawing);
                 textOutputArea.append("loaded file: " + file.getName() + "\n");
 
                 /*Getting image to display onto menuPanel*/
                 menuPanel.removeAll(); //Clears the panel of the image
                 BufferedImage openedImg = currentImage.getOriginalImg();
-                    /* Potential scaling stuff
-                    int scaleX = MENU_PANEL_WIDTH/openedImg.getWidth();
-                    int scaleY = MENU_PANEL_HEIGHT/openedImg.getHeight();
-                    int newWidth = openedImg.getWidth() * scaleX;
-                    System.out.println(newWidth);
-                    int newHeight = openedImg.getHeight() * scaleY;
-                    System.out.println(newHeight);
-                    JLabel pic = new JLabel(new ImageIcon(openedImg.getScaledInstance(newWidth, newHeight, Image.SCALE_FAST)));
-                    */
-                JLabel pic = new JLabel(new ImageIcon(openedImg.getScaledInstance(MENU_PANEL_WIDTH - 10, 200, Image.SCALE_FAST))); //Temporary forced scaling
+                BufferedImage edgeImg = currentImage.getEdgeImg();
+
+                double width = openedImg.getWidth();
+                double height = openedImg.getHeight();
+                double scale;
+                double maxSize = MENU_PANEL_WIDTH-10;//Maximum width/height
+
+                //Calculate scale so that the longest side is equal to the maximum size
+                if(width>height) scale = maxSize/width;
+                else scale = maxSize/height;
+
+                //scaled picture
+                JLabel pic = new JLabel(new ImageIcon(openedImg.getScaledInstance((int)(width*scale), (int)(height*scale), Image.SCALE_FAST)));
+                JLabel edgePic = new JLabel(new ImageIcon(edgeImg.getScaledInstance((int)(width*scale), (int)(height*scale), Image.SCALE_FAST)));
 
                 /*Setting the orientation of the label below the icon*/
                 pic.setHorizontalTextPosition(JLabel.CENTER);
@@ -269,16 +259,20 @@ public class UI extends JFrame implements ActionListener{
                 pic.setText("happiness is a joke"); //Label
 
                 menuPanel.add(pic);
+                menuPanel.add(edgePic);
                 menuPanel.updateUI(); //Reshowing panel components
                 revalidate();
             }
         }
     }
 
-    /*Saving a file*/
+    /**
+     * Saves a drawing
+     * */
     public void saveFile(){
-        if(currentImage==null) {
-            textOutputArea.append("you haven't opened an image.\n");
+        if(drawing==null) {
+            textOutputArea.append("You haven't created a drawing.\n");
+            return;
         }
         JFileChooser saveFileChooser = new JFileChooser();
         saveFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -287,17 +281,18 @@ public class UI extends JFrame implements ActionListener{
             textOutputArea.append("No file selected\n");
         }else{
             //Save
-            File f = saveFileChooser.getSelectedFile();
-            if(!currentImage.save(f)) {
-                textOutputArea.append("Could not save\n");
-            }
+            File file = saveFileChooser.getSelectedFile();
+            textOutputArea.append("No drawing created\n");
         }
     }
 
+    /**
+     * TEST: SAVES TEST DRAWING
+     */
     public void saveTest(){
-
-        if(currentImage == null){
-            textOutputArea.append("You have not opened an image\n");
+        if(drawing == null){
+            textOutputArea.append("You haven't created a drawing.\n");
+            return;
         }
         JFileChooser saveTestFileChooser = new JFileChooser();
         saveTestFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -306,13 +301,19 @@ public class UI extends JFrame implements ActionListener{
             textOutputArea.append("Save cancelled\n");
         }else{
             //Save
-            File f = saveTestFileChooser.getSelectedFile();
-            if(!currentImage.saveTest(f)){
-                textOutputArea.append("Could not save test file\n");
-            }
+            File file = saveTestFileChooser.getSelectedFile();
+            drawing.saveLinesTest(file);
         }
     }
 
+    /**Starts simulation*/
+    public void runSim(){
+        simulation.simulate();
+    }
+
+    /**
+     * Changes theme to dark theme
+     */
     public void enableDarkTheme(){
 
         for(JPanel panel : panelSet) {
@@ -332,6 +333,9 @@ public class UI extends JFrame implements ActionListener{
 
     }
 
+    /**
+     * Changes theme to light theme
+     */
     public void enableLightTheme(){
 
         for(JPanel panel : panelSet){
@@ -373,11 +377,6 @@ public class UI extends JFrame implements ActionListener{
         newTextAreaBorder.setTitleColor(Color.yellow);
         textOutputArea.setBorder(newTextAreaBorder);
         textOutputArea.setForeground(Color.yellow); //Changes text color
-
-    }
-
-    public void runSim(){
-
 
     }
 
