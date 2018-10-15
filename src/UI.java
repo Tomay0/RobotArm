@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.awt.Color;
+import java.util.List;
 
 public class UI extends JFrame implements ActionListener{
     //SOME CONSTANTS
@@ -232,6 +233,7 @@ public class UI extends JFrame implements ActionListener{
                 drawing = currentImage.createDrawing();//turn into drawing
                 simulation.setDrawing(drawing);
                 textOutputArea.append("loaded file: " + file.getName() + "\n");
+                textOutputArea.append("Number of lines: " + simulation.getNumberOfLines() + "\n");
 
                 /*Getting image to display onto menuPanel*/
                 menuPanel.removeAll(); //Clears the panel of the image

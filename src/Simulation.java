@@ -70,6 +70,13 @@ public class Simulation implements Runnable{
     }
 
     /**
+     * Gives the number of lines
+     */
+    public int getNumberOfLines() {
+        return lines.size();
+    }
+
+    /**
      * Starts the simulation from the beginning
      */
     public void simulate(){

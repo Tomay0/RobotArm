@@ -13,6 +13,8 @@ public class ImageProcess {
     public static final double X_LEFT = -0.4;//minimum x the image will be drawn from
     public static final double Y_TOP = -1.4;//minimum y the image will be drawn from
     public static final double SIZE = 1.8;//maximum size of the image (width or height)
+    public static final double MAX_LINE_LENGTH = 0.1;//split lines in half if above this length for lines
+    public static final double STRAIGHT_LINE_THRESHOLD = 0.01;//points on a line must be less than many pixels away to be considered straight
 
     private static final int THRESHOLD = 100;//threshold for detecting edges
 
@@ -138,7 +140,7 @@ public class ImageProcess {
                             line.add(scale(nearEdge.getX(),nearEdge.getY()));//add point to line
                             nearEdge = getNearEdge((int)nearEdge.getX(),(int)nearEdge.getY());
                         }*/
-
+                        line = optimizeLine(line);
                         //put the line into the list
                         drawing.addLine(line);
                     }
@@ -208,6 +210,66 @@ public class ImageProcess {
             }
         }
         return point;
+    }
+
+    /**
+     * Reduce number of points that make a line
+     */
+    public static List<Point> optimizeLine(List<Point> line) {
+        //if the line is 1 or 2 points, this is the most simple it can be
+        if(line.size()<3) return line;
+
+        //check if the line represented by the points given can be made by a straight line
+        Point p1 = line.get(0);
+        Point p2 = line.get(line.size()-1);
+        double lineLength = p1.dist(p2);//distance from p1 to p2
+
+        int splitIndex = -1;//where to cut the line segment in half
+        if(lineLength<MAX_LINE_LENGTH) {//if the line is longer than the maximum line length, always split in half
+            Point lineVec = new Point(p2.getX()-p1.getX(),p2.getY()-p1.getY());//vector from p1 to p2
+
+            double maxDistance = 0;//calculated as the maximum
+
+            //for all points between p1 and p2 once one that exceeds a
+            for(int i = 1;i<line.size()-1;i++) {
+                Point p = line.get(i);
+                Point pVec = new Point(p.getX()-p1.getX(),p.getY()-p1.getY());//vector from p1 to p
+                double pVecLength = p1.dist(p);//distance from p1 to p
+
+                double dot = lineVec.getX() * pVec.getX() + lineVec.getY() * pVec.getY();//dot product
+                double projectDistance = dot/lineLength;//distance from p1 to closest point on line to p
+
+                double distanceFromLine = Math.sqrt(pVecLength * pVecLength - projectDistance * projectDistance);
+                if(distanceFromLine>STRAIGHT_LINE_THRESHOLD && distanceFromLine>maxDistance) {//check that the point is less than the threshold, otherwise take note of the position and find the point with the maximum distance away from the line
+                    splitIndex = i;
+                    maxDistance = distanceFromLine;
+                }
+            }
+
+            //If all lines are less than the threshold, return the line as a single segment
+            if(splitIndex==-1) {
+                List<Point> optimizedLine = new ArrayList<>();
+                optimizedLine.add(p1);
+                optimizedLine.add(p2);
+                return optimizedLine;
+            }
+        }else splitIndex = line.size()/2;//set the split index as halfway through
+
+        //Split the line segments in half at "splitIndex"
+        List<Point> optimizedLine = new ArrayList<>();
+        List<Point> half1 = new ArrayList<>();
+        List<Point> half2 = new ArrayList<>();
+        for(int i = 0;i<=splitIndex;i++) {
+            half1.add(line.get(i));
+        }
+        for(int i = splitIndex;i<line.size();i++) {
+            half2.add(line.get(i));
+        }
+
+        optimizedLine.addAll(optimizeLine(half1));
+        optimizedLine.remove(optimizedLine.size()-1);
+        optimizedLine.addAll(optimizeLine(half2));
+        return optimizedLine;
     }
 
     /**
