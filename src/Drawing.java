@@ -28,9 +28,6 @@ public class Drawing {
     private int rightArm;//right control signal
     PrintWriter writer;//file to write to
 
-    //FILTER
-    private int minLineLength;//minimum length of a line
-
     /**
      * Initialises an empty drawing
      */
@@ -39,7 +36,6 @@ public class Drawing {
         leftArm = 0;
         rightArm = 0;
         writer = null;
-        minLineLength = 2;
     }
 
     /**
@@ -77,7 +73,6 @@ public class Drawing {
         try {
             writer = new PrintWriter(file);
             for(List<Point> line : lines) {//go through all lines
-                if(line.size()<minLineLength) continue;//don't include lines less than the minimum line length
                 for (int i = 0;i<line.size();i++) {
                     movePenTo(line.get(i));//move pen to correct location
                     if(i==0) setPenDown(true);//set pen down after moving the first time
@@ -167,10 +162,4 @@ public class Drawing {
     public List<List<Point>> getLines() {
         return Collections.unmodifiableList(lines);
     }
-
-    /**Get Minimum line length*/
-    public int getMinLineLength() {return minLineLength;}
-
-    /**Set Minimum line length*/
-    public void setMinLineLength(int minLineLength) {this.minLineLength = minLineLength;}
 }

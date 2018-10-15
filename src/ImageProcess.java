@@ -14,7 +14,8 @@ public class ImageProcess {
     public static final double Y_TOP = -1.4;//minimum y the image will be drawn from
     public static final double SIZE = 1.8;//maximum size of the image (width or height)
     public static final double MAX_LINE_LENGTH = 0.1;//split lines in half if above this length for lines
-    public static final double STRAIGHT_LINE_THRESHOLD = 0.01;//points on a line must be less than many pixels away to be considered straight
+    public static final double STRAIGHT_LINE_THRESHOLD = 0.004;//points on a line must be less than many pixels away to be considered straight
+    public static final int MINIMUM_LINE_POINTS = 5;//minimum number of pixels for a line to be drawn (prevents noise)
 
     private static final int THRESHOLD = 100;//threshold for detecting edges
 
@@ -134,12 +135,14 @@ public class ImageProcess {
                             line.add(scale(nearMaxEdge.getX(),nearMaxEdge.getY()));//add point to line
                             nearMaxEdge = getNearestEdgeMax((int)nearMaxEdge.getX(),(int)nearMaxEdge.getY());//find next pixel
                         }
+
                         /*Point nearEdge = getNearEdge(x,y);
                         while(nearEdge!=null) {
                             edgeValues[(int)nearEdge.getX()][(int)nearEdge.getY()] = 0;//get rid of pixel
                             line.add(scale(nearEdge.getX(),nearEdge.getY()));//add point to line
                             nearEdge = getNearEdge((int)nearEdge.getX(),(int)nearEdge.getY());
                         }*/
+                        if(line.size()<MINIMUM_LINE_POINTS) continue;//discard the line if it has too few points on it
                         line = optimizeLine(line);
                         //put the line into the list
                         drawing.addLine(line);

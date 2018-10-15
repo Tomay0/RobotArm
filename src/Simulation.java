@@ -51,17 +51,15 @@ public class Simulation implements Runnable{
 
         if (drawing == null) return;//removing the drawing clears the simulation
         for(List<Point> line : drawing.getLines()) {//get number of lines in the image
-            if(line.size()>=drawing.getMinLineLength()) {
-                for(int i = 0;i<line.size()-1;i++) {
-                    double[] lineDoubles = new double[4];
-                    //scale points to be within the window
-                    lineDoubles[0] = size * (line.get(i).getX()-ImageProcess.X_LEFT)/ImageProcess.SIZE;//x1
-                    lineDoubles[1] = size * (line.get(i).getY()-ImageProcess.Y_TOP)/ImageProcess.SIZE;//y1
-                    lineDoubles[2] = size * (line.get(i+1).getX()-ImageProcess.X_LEFT)/ImageProcess.SIZE;//x2
-                    lineDoubles[3] = size * (line.get(i+1).getY()-ImageProcess.Y_TOP)/ImageProcess.SIZE;//y2
+            for(int i = 0;i<line.size()-1;i++) {
+                double[] lineDoubles = new double[4];
+                //scale points to be within the window
+                lineDoubles[0] = size * (line.get(i).getX()-ImageProcess.X_LEFT)/ImageProcess.SIZE;//x1
+                lineDoubles[1] = size * (line.get(i).getY()-ImageProcess.Y_TOP)/ImageProcess.SIZE;//y1
+                lineDoubles[2] = size * (line.get(i+1).getX()-ImageProcess.X_LEFT)/ImageProcess.SIZE;//x2
+                lineDoubles[3] = size * (line.get(i+1).getY()-ImageProcess.Y_TOP)/ImageProcess.SIZE;//y2
 
-                    lines.add(lineDoubles);
-                }
+                lines.add(lineDoubles);
             }
         }
         prevStep = 0;
