@@ -155,7 +155,6 @@ public class ImageProcess {
         return drawing;
     }
 
-
     /**
      * Scales the image correctly in the drawing space
      */

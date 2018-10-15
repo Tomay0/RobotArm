@@ -41,6 +41,7 @@ public class UI extends JFrame implements ActionListener{
     private JScrollPane textOutputAreaScroll;
     private Set<JPanel> panelSet = new HashSet<>();
     private JSlider thresholdSlider;
+    private int theme = 1; //1 = Light Theme, 2 = Dark Theme, 3 = Socialist Theme (Potentially Redundant)
 
     //MAIN ROBOT ARM STUFF
     private ImageProcess currentImage;
@@ -89,7 +90,6 @@ public class UI extends JFrame implements ActionListener{
         textOutputArea.setBackground(Color.white);
         textOutputArea.setBorder(BorderFactory.createTitledBorder(textOutBorderTitle));
         textOutputArea.setEditable(false); //Prevents user from typing into text area
-        textOutputArea.setText("H E L P  M E\n");
         textOutputAreaScroll = new JScrollPane(textOutputArea); //Adds the panel to the scroll pane - enables scrolling of the panel
         textOutputAreaScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED); //Only allows scrolling when needed
 
@@ -310,7 +310,8 @@ public class UI extends JFrame implements ActionListener{
         textOutputArea.setBorder(newTextAreaBorder);
         textOutputArea.setForeground(Color.white); //Changes text color
 
-
+        theme = 2;
+        simulation.redraw();
     }
 
     /**
@@ -335,6 +336,9 @@ public class UI extends JFrame implements ActionListener{
         textOutputArea.setBorder(newTextAreaBorder);
         textOutputArea.setForeground(Color.black); //Changes text color
 
+        theme = 1;
+        simulation.redraw();
+
     }
 
     /*Potentially redundant*/
@@ -357,9 +361,16 @@ public class UI extends JFrame implements ActionListener{
         textOutputArea.setBorder(newTextAreaBorder);
         textOutputArea.setForeground(Color.yellow); //Changes text color
 
+        theme = 3;
+        simulation.redraw();
+
     }
 
+    /*Getters*/
+    public int getTheme(){
+        return theme;
 
+    }
 
     public static void main(String[] args) {
         UI ui = new UI();
