@@ -217,6 +217,11 @@ public class ImageProcess {
 
     /**
      * Reduce number of points that make a line
+     * Checks the first and last point of the line and returns the single line segment if:
+     * - the line is greater than the maximum line length (to prevent the robot from drawing an arc)
+     * - all points between the first and last point on the line are within STRAIGHT_LINE_THRESHOLD distance from the straight line
+     * Coordinates are draw-space coordinates rather than number of pixels
+     *
      */
     public static List<Point> optimizeLine(List<Point> line) {
         //if the line is 1 or 2 points, this is the most simple it can be
@@ -233,7 +238,7 @@ public class ImageProcess {
 
             double maxDistance = 0;//calculated as the maximum
 
-            //for all points between p1 and p2 once one that exceeds a
+            //for all points between p1 and p2 once one that exceeds the straight line threshold
             for(int i = 1;i<line.size()-1;i++) {
                 Point p = line.get(i);
                 Point pVec = new Point(p.getX()-p1.getX(),p.getY()-p1.getY());//vector from p1 to p
