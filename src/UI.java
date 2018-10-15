@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.*;
 import java.awt.Color;
 
-public class UI extends JFrame{
+public class UI extends JFrame implements ActionListener{
     //SOME CONSTANTS
     private static final String menuBorderTitle = "Menu";
     private static final String displayBorderTitle = "Happiness is an illusion";
@@ -33,7 +33,9 @@ public class UI extends JFrame{
     private JMenu fileMenu = new JMenu("File");
     private JMenu customizeMenu = new JMenu("Customize");
     private JMenu simMenu = new JMenu("Simulation");
-    private JMenuItem openMenuItem, saveMenuItem, saveTestMenuItem, darkThemeMenuItem, lightThemeMenuItem, runSimMenuItem = new JMenuItem();
+    private JMenu drawMenu = new JMenu("Draw");
+    private JMenuItem openMenuItem, saveMenuItem, saveTestMenuItem, darkThemeMenuItem, lightThemeMenuItem, socialistThemeMenuItem
+            ,runSimMenuItem, drawCircle, drawHorizLine, drawVertLine, drawWord;
     private JScrollPane textOutputAreaScroll;
     private Set<JPanel> panelSet = new HashSet<>();
     private JSlider thresholdSlider;
@@ -42,7 +44,6 @@ public class UI extends JFrame{
     private ImageProcess currentImage;
     private Drawing drawing;
     private Simulation simulation;
-
 
     /**
      * Initialise the UI
@@ -103,6 +104,7 @@ public class UI extends JFrame{
         menuBar.add(fileMenu);
         menuBar.add(customizeMenu);
         menuBar.add(simMenu);
+        menuBar.add(drawMenu);
         setupMenuBarItems();
         setVisible(true);
     }
@@ -120,14 +122,20 @@ public class UI extends JFrame{
         /*For useless functionality*/
         darkThemeMenuItem = new JMenuItem("Dark theme :)");
         lightThemeMenuItem = new JMenuItem("Light Theme :)");
+        socialistThemeMenuItem = new JMenuItem("Socialist Theme :D");
 
         /*For sim menu*/
         runSimMenuItem = new JMenuItem("Run Simulation");
 
-        /*Adding listeners to the buttons*/
-        openMenuItem.addActionListener(new OpenButtonListener());
-        saveMenuItem.addActionListener(new SaveButtonListener());
-        saveTestMenuItem.addActionListener(new SaveTestButtonListener());
+        drawWord = new JMenuItem("Draw Word");
+        drawCircle = new JMenuItem("Draw Circle");
+        drawVertLine = new JMenuItem("Draw Vertical Line");
+        drawHorizLine = new JMenuItem("Draw Horizontal Line");
+
+        /*Adding action commands to file menu itmes*/
+        openMenuItem.setActionCommand("Open");
+        saveMenuItem.setActionCommand("Save");
+        saveTestMenuItem.setActionCommand("Save Test");
 
         /*Adding to fileMenu*/
         fileMenu.add(openMenuItem);
@@ -137,16 +145,38 @@ public class UI extends JFrame{
         /*Adding the useless things into the thing*/
         customizeMenu.add(darkThemeMenuItem);
         customizeMenu.add(lightThemeMenuItem);
+        customizeMenu.add(socialistThemeMenuItem);
 
-        /*Adding listeners to the useless things*/
-        darkThemeMenuItem.addActionListener(new DarkThemeButtonListener());
-        lightThemeMenuItem.addActionListener(new LightThemeButtonListener());
+        darkThemeMenuItem.setActionCommand("Enable Dark Theme");
+        lightThemeMenuItem.setActionCommand("Enable Light Theme");
+        socialistThemeMenuItem.setActionCommand("Enable Socialist Theme");
 
         /*Adding to sim menu*/
         simMenu.add(runSimMenuItem);
 
         /*Adding listeners to the sim menu items*/
-        runSimMenuItem.addActionListener(new RunSimListener());
+        runSimMenuItem.setActionCommand("Run Sim");
+
+        /*Adding menu items to drawMenu*/
+        drawMenu.add(drawCircle);
+        drawMenu.add(drawHorizLine);
+        drawMenu.add(drawWord);
+        drawMenu.add(drawVertLine);
+
+        drawCircle.setActionCommand("Draw Circle"); //then in actionPerformed - event.getActionCommand()
+        drawHorizLine.setActionCommand("Draw Horizontal Line");
+        drawVertLine.setActionCommand("Draw Vertical Line");
+        drawWord.setActionCommand("Draw Word");
+
+        /*Adding action listeners to all menu items*/
+        openMenuItem.addActionListener(this);
+        saveMenuItem.addActionListener(this);
+        saveTestMenuItem.addActionListener(this);
+        darkThemeMenuItem.addActionListener(this);
+        lightThemeMenuItem.addActionListener(this);
+        socialistThemeMenuItem.addActionListener(this);
+        runSimMenuItem.addActionListener(this);
+        //TODO: Add action listeners to all the draw menu items
     }
 
     public void setupMenuPanel(){
@@ -157,34 +187,71 @@ public class UI extends JFrame{
 
     }
 
-    /*
-    * Open an image
-    */
-    private class OpenButtonListener implements ActionListener{
-        public void actionPerformed(ActionEvent event){
+    public void actionPerformed(ActionEvent event){
 
-            JFileChooser openFileChooser = new JFileChooser();
-            openFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-            int status = openFileChooser.showOpenDialog(null); //Prompting user to open a file
-            /*Checks if a file was selected*/
-            if(status != openFileChooser.APPROVE_OPTION){
-                textOutputArea.append("No file selected\n");
+        if(event.getActionCommand().equals("Open")){
+            openFile();
 
+        }else if(event.getActionCommand().equals("Save")){
+            saveFile();
+
+        }else if(event.getActionCommand().equals("Save Test")){
+            saveTest();
+
+        }else if(event.getActionCommand().equals("Enable Dark Theme")){
+            System.out.println("Dark theme");
+            enableDarkTheme();
+
+        }else if(event.getActionCommand().equals("Enable Light Theme")){
+            enableLightTheme();
+
+        }else if(event.getActionCommand().equals("Run Sim")){
+            runSim();
+
+        }else if(event.getActionCommand().equals("Draw Circle")){
+
+
+        }else if(event.getActionCommand().equals("Draw Horizontal Line")){
+
+
+        }else if(event.getActionCommand().equals("Draw Vertical Line")){
+
+
+        }else if(event.getActionCommand().equals("Draw Word")){
+
+
+        }else if(event.getActionCommand().equals("Enable Socialist Theme")){
+            enableSocialistTheme();
+
+        }
+
+
+
+    }
+
+    public void openFile(){
+        JFileChooser openFileChooser = new JFileChooser();
+        openFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        int status = openFileChooser.showOpenDialog(null); //Prompting user to open a file
+        /*Checks if a file was selected*/
+        if(status != openFileChooser.APPROVE_OPTION){
+            textOutputArea.append("No file selected\n");
+
+        }else{
+            //Open
+            File file = openFileChooser.getSelectedFile();
+            currentImage = new ImageProcess(file); //Processing the opened image
+            if(currentImage.getDrawing()==null) {//check open of the image was ok
+                currentImage = null;
+                textOutputArea.append("Unable to read image data from the file you picked.\n");
             }else{
-                //Open
-                File file = openFileChooser.getSelectedFile();
-                currentImage = new ImageProcess(file); //Processing the opened image
-                if(currentImage.getDrawing()==null) {//check open of the image was ok
-                    currentImage = null;
-                    textOutputArea.append("Unable to read image data from the file you picked.\n");
-                }else{
-                    //Load successful
-                    drawing = currentImage.getDrawing();
-                    textOutputArea.append("loaded file: " + file.getName() + "\n");
+                //Load successful
+                drawing = currentImage.getDrawing();
+                textOutputArea.append("loaded file: " + file.getName() + "\n");
 
-                    /*Getting image to display onto menuPanel*/
-                    menuPanel.removeAll(); //Clears the panel of the image
-                    BufferedImage openedImg = currentImage.getOriginalImg();
+                /*Getting image to display onto menuPanel*/
+                menuPanel.removeAll(); //Clears the panel of the image
+                BufferedImage openedImg = currentImage.getOriginalImg();
                     /* Potential scaling stuff
                     int scaleX = MENU_PANEL_WIDTH/openedImg.getWidth();
                     int scaleY = MENU_PANEL_HEIGHT/openedImg.getHeight();
@@ -194,118 +261,127 @@ public class UI extends JFrame{
                     System.out.println(newHeight);
                     JLabel pic = new JLabel(new ImageIcon(openedImg.getScaledInstance(newWidth, newHeight, Image.SCALE_FAST)));
                     */
-                    JLabel pic = new JLabel(new ImageIcon(openedImg.getScaledInstance(MENU_PANEL_WIDTH - 10, 200, Image.SCALE_FAST))); //Temporary forced scaling
+                JLabel pic = new JLabel(new ImageIcon(openedImg.getScaledInstance(MENU_PANEL_WIDTH - 10, 200, Image.SCALE_FAST))); //Temporary forced scaling
 
-                    /*Setting the orientation of the label below the icon*/
-                    pic.setHorizontalTextPosition(JLabel.CENTER);
-                    pic.setVerticalTextPosition(JLabel.BOTTOM);
-                    pic.setText("happiness is a joke"); //Label
+                /*Setting the orientation of the label below the icon*/
+                pic.setHorizontalTextPosition(JLabel.CENTER);
+                pic.setVerticalTextPosition(JLabel.BOTTOM);
+                pic.setText("happiness is a joke"); //Label
 
-                    menuPanel.add(pic);
-                    menuPanel.updateUI(); //Reshowing panel components
-                    revalidate();
-                }
+                menuPanel.add(pic);
+                menuPanel.updateUI(); //Reshowing panel components
+                revalidate();
             }
         }
     }
 
-    /**
-     * Save a drawing
-     */
-    private class SaveButtonListener implements ActionListener{
-        public void actionPerformed(ActionEvent event){
-            if(currentImage==null) {
-                textOutputArea.append("you haven't opened an image.\n");
-            }
-            JFileChooser saveFileChooser = new JFileChooser();
-            saveFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-            int status = saveFileChooser.showSaveDialog(null); //Prompting user to open a file
-            if(status != saveFileChooser.APPROVE_OPTION){
-                textOutputArea.append("No file selected\n");
-            }else{
-                //Save
-                File f = saveFileChooser.getSelectedFile();
-                if(!currentImage.save(f)) {
-                    textOutputArea.append("Could not save\n");
-                }
+    /*Saving a file*/
+    public void saveFile(){
+        if(currentImage==null) {
+            textOutputArea.append("you haven't opened an image.\n");
+        }
+        JFileChooser saveFileChooser = new JFileChooser();
+        saveFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        int status = saveFileChooser.showSaveDialog(null); //Prompting user to open a file
+        if(status != saveFileChooser.APPROVE_OPTION){
+            textOutputArea.append("No file selected\n");
+        }else{
+            //Save
+            File f = saveFileChooser.getSelectedFile();
+            if(!currentImage.save(f)) {
+                textOutputArea.append("Could not save\n");
             }
         }
     }
 
-    /**
-     * Save a drawing (TEST)
-     */
-    private class SaveTestButtonListener implements ActionListener{
-        public void actionPerformed(ActionEvent event){
-            if(currentImage == null){
-                textOutputArea.append("You have not opened an image\n");
-            }
-            JFileChooser saveTestFileChooser = new JFileChooser();
-            saveTestFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-            int status = saveTestFileChooser.showSaveDialog(null);
-            if(status != saveTestFileChooser.APPROVE_OPTION){
-                textOutputArea.append("Save cancelled\n");
-            }else{
-                //Save
-                File f = saveTestFileChooser.getSelectedFile();
-                if(!currentImage.saveTest(f)){
-                    textOutputArea.append("Could not save test file\n");
-                }
+    public void saveTest(){
+
+        if(currentImage == null){
+            textOutputArea.append("You have not opened an image\n");
+        }
+        JFileChooser saveTestFileChooser = new JFileChooser();
+        saveTestFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        int status = saveTestFileChooser.showSaveDialog(null);
+        if(status != saveTestFileChooser.APPROVE_OPTION){
+            textOutputArea.append("Save cancelled\n");
+        }else{
+            //Save
+            File f = saveTestFileChooser.getSelectedFile();
+            if(!currentImage.saveTest(f)){
+                textOutputArea.append("Could not save test file\n");
             }
         }
     }
 
-    /*For the sensitive eyes :) (This was not a waste of time)*/
-    private class DarkThemeButtonListener implements ActionListener{
-        public void actionPerformed(ActionEvent event){
+    public void enableDarkTheme(){
 
-            for(JPanel panel : panelSet) {
-                panel.setBackground(Color.black);
-                TitledBorder newBorder = (TitledBorder) panel.getBorder();//panel.getBorder() returns Border type - need to cast to TitledBorder type
-                newBorder.setTitleColor(Color.white);
-                panel.setBorder(newBorder);
-            }
-
-            /*Changing the color of the text area*/
-            textOutputArea.setBackground(Color.black);
-            TitledBorder newTextAreaBorder = (TitledBorder) textOutputArea.getBorder();
-            newTextAreaBorder.setTitleColor(Color.white);
-            textOutputArea.setBorder(newTextAreaBorder);
-            textOutputArea.setForeground(Color.white); //Changes text color
-
+        for(JPanel panel : panelSet) {
+            panel.setBackground(Color.black);
+            TitledBorder newBorder = (TitledBorder) panel.getBorder();//panel.getBorder() returns Border type - need to cast to TitledBorder type
+            newBorder.setTitleColor(Color.white);
+            panel.setBorder(newBorder);
         }
-    }
-    /*(This was not a waste of time)*/
-    private class LightThemeButtonListener implements ActionListener{
-        public void actionPerformed(ActionEvent event){
-            for(JPanel panel : panelSet){
-                panel.setBackground(Color.white);
 
-                /*Turning border title color white*/
-                TitledBorder newBorder = (TitledBorder) panel.getBorder(); //panel.getBorder() returns Border type - need to cast to TitledBorder type
-                newBorder.setTitleColor(Color.black);
-                panel.setBorder(newBorder);
+        /*Changing the color of the text area*/
+        textOutputArea.setBackground(Color.black);
+        TitledBorder newTextAreaBorder = (TitledBorder) textOutputArea.getBorder();
+        newTextAreaBorder.setTitleColor(Color.white);
+        textOutputArea.setBorder(newTextAreaBorder);
+        textOutputArea.setForeground(Color.white); //Changes text color
 
-            }
 
-            /*Changing the color of the text area*/
-            textOutputArea.setBackground(Color.white);
-            TitledBorder newTextAreaBorder = (TitledBorder) textOutputArea.getBorder();
-            newTextAreaBorder.setTitleColor(Color.black);
-            textOutputArea.setBorder(newTextAreaBorder);
-            textOutputArea.setForeground(Color.black); //Changes text color
-        }
     }
 
-    private class RunSimListener implements ActionListener{
-        public void actionPerformed(ActionEvent event){
-            if(currentImage == null){
-                textOutputArea.append("Can not run simulation: no image has been opened\n");
-            }else{
-                simulation = new Simulation(drawing);
-            }
+    public void enableLightTheme(){
+
+        for(JPanel panel : panelSet){
+            panel.setBackground(Color.white);
+
+            /*Turning border title color white*/
+            TitledBorder newBorder = (TitledBorder) panel.getBorder(); //panel.getBorder() returns Border type - need to cast to TitledBorder type
+            newBorder.setTitleColor(Color.black);
+            panel.setBorder(newBorder);
+
         }
+
+        /*Changing the color of the text area*/
+        textOutputArea.setBackground(Color.white);
+        TitledBorder newTextAreaBorder = (TitledBorder) textOutputArea.getBorder();
+        newTextAreaBorder.setTitleColor(Color.black);
+        textOutputArea.setBorder(newTextAreaBorder);
+        textOutputArea.setForeground(Color.black); //Changes text color
+
     }
+
+    /*Potentially redundant*/
+    public void enableSocialistTheme(){
+
+        for(JPanel panel : panelSet){
+            panel.setBackground(Color.red);
+
+            /*Turning border title color white*/
+            TitledBorder newBorder = (TitledBorder) panel.getBorder(); //panel.getBorder() returns Border type - need to cast to TitledBorder type
+            newBorder.setTitleColor(Color.yellow);
+            panel.setBorder(newBorder);
+            textOutputArea.setText("OUR UI");
+
+        }
+
+        /*Changing the color of the text area*/
+        textOutputArea.setBackground(Color.red);
+        TitledBorder newTextAreaBorder = (TitledBorder) textOutputArea.getBorder();
+        newTextAreaBorder.setTitleColor(Color.yellow);
+        textOutputArea.setBorder(newTextAreaBorder);
+        textOutputArea.setForeground(Color.yellow); //Changes text color
+
+    }
+
+    public void runSim(){
+
+
+    }
+
+
 
     public static void main(String[] args) {
         UI ui = new UI();
