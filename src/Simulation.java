@@ -66,6 +66,7 @@ public class Simulation implements Runnable{
         }
         prevStep = 0;
         step = lines.size();//start with the simulation complete
+        stepSpeed = (int)Math.ceil(lines.size()/(FRAME_RATE * 60.0));//maximum of 60 seconds to complete the simulation
     }
 
     /**

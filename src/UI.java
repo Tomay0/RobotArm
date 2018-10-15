@@ -24,7 +24,7 @@ public class UI extends JFrame implements ActionListener{
     private static final int DISPLAY_PANEL_HEIGHT = FRAME_HEIGHT;
     private static final int TEXT_OUT_PANEL_WIDTH = DISPLAY_PANEL_WIDTH;
     private static final int TEXT_OUT_PANEL_HEIGHT = DISPLAY_PANEL_HEIGHT/5;
-    private static final int SIMULATION_SIZE = 400;
+    private static final int SIMULATION_SIZE = 600;
 
     //UI STUFF
     private JPanel menuPanel; //holds buttons and other stuff (tbd)
@@ -35,7 +35,7 @@ public class UI extends JFrame implements ActionListener{
     private JMenu customizeMenu = new JMenu("Customize");
     private JMenu simMenu = new JMenu("Simulation");
     private JMenu drawMenu = new JMenu("Draw");
-    private JMenuItem openMenuItem, saveMenuItem, saveTestMenuItem, darkThemeMenuItem, lightThemeMenuItem, socialistThemeMenuItem
+    private JMenuItem openMenuItem, saveMenuItem, darkThemeMenuItem, lightThemeMenuItem, socialistThemeMenuItem
             ,runSimMenuItem, drawCircle, drawHorizLine, drawVertLine, drawWord;
     private JScrollPane textOutputAreaScroll;
     private Set<JPanel> panelSet = new HashSet<>();
@@ -51,7 +51,9 @@ public class UI extends JFrame implements ActionListener{
      */
     public UI(){
         currentImage  = null;
-        drawing = null;
+        drawing = new Drawing();
+        drawing.drawRect(-0.3,-1.3,1,1,50);
+        drawing.drawCircle(-0.3,-1.3,0.5,50);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }catch(Exception e) {
@@ -101,6 +103,7 @@ public class UI extends JFrame implements ActionListener{
         JLabel simLabel = new JLabel(new ImageIcon(simulation.getImage()));
         displayPanel.add(simLabel);
         new Thread(simulation).start();
+        simulation.setDrawing(drawing);
 
         /*Adding panels to set*/
         panelSet.add(menuPanel);
@@ -123,7 +126,6 @@ public class UI extends JFrame implements ActionListener{
         /*For file menu*/
         openMenuItem = new JMenuItem("Open Image");
         saveMenuItem = new JMenuItem("Save Drawing");
-        saveTestMenuItem = new JMenuItem("Save Test");
 
         /*For useless functionality*/
         darkThemeMenuItem = new JMenuItem("Dark theme :)");
@@ -141,12 +143,10 @@ public class UI extends JFrame implements ActionListener{
         /*Adding action commands to file menu itmes*/
         openMenuItem.setActionCommand("Open");
         saveMenuItem.setActionCommand("Save");
-        saveTestMenuItem.setActionCommand("Save Test");
 
         /*Adding to fileMenu*/
         fileMenu.add(openMenuItem);
         fileMenu.add(saveMenuItem);
-        fileMenu.add(saveTestMenuItem);
 
         /*Adding the useless things into the thing*/
         customizeMenu.add(darkThemeMenuItem);
@@ -177,7 +177,6 @@ public class UI extends JFrame implements ActionListener{
         /*Adding action listeners to all menu items*/
         openMenuItem.addActionListener(this);
         saveMenuItem.addActionListener(this);
-        saveTestMenuItem.addActionListener(this);
         darkThemeMenuItem.addActionListener(this);
         lightThemeMenuItem.addActionListener(this);
         socialistThemeMenuItem.addActionListener(this);
@@ -200,7 +199,6 @@ public class UI extends JFrame implements ActionListener{
         String command = event.getActionCommand();
         if(command.equals("Open"))openFile();
         else if(command.equals("Save"))saveFile();
-        else if(command.equals("Save Test"))saveTest();
         else if(command.equals("Enable Dark Theme"))enableDarkTheme();
         else if(command.equals("Enable Light Theme")) enableLightTheme();
         else if(command.equals("Enable Socialist Theme"))enableSocialistTheme();
@@ -286,26 +284,6 @@ public class UI extends JFrame implements ActionListener{
         }
     }
 
-    /**
-     * TEST: SAVES TEST DRAWING
-     */
-    public void saveTest(){
-        if(drawing == null){
-            textOutputArea.append("You haven't created a drawing.\n");
-            return;
-        }
-        JFileChooser saveTestFileChooser = new JFileChooser();
-        saveTestFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-        int status = saveTestFileChooser.showSaveDialog(null);
-        if(status != saveTestFileChooser.APPROVE_OPTION){
-            textOutputArea.append("Save cancelled\n");
-        }else{
-            //Save
-            File file = saveTestFileChooser.getSelectedFile();
-            drawing.saveLinesTest(file);
-        }
-    }
-
     /**Starts simulation*/
     public void runSim(){
         simulation.simulate();
@@ -368,7 +346,6 @@ public class UI extends JFrame implements ActionListener{
             newBorder.setTitleColor(Color.yellow);
             panel.setBorder(newBorder);
             textOutputArea.setText("OUR UI");
-
         }
 
         /*Changing the color of the text area*/

@@ -68,10 +68,16 @@ public class ImageProcess {
         for(int y = 0;y<height;y++) {
             for(int x =0;x<width;x++) {
                 //indices of left/right bottom/top. This is to avoid checking pixels outside edges of the screen
-                int top = y==0 ? 0 : y-1;
+                /*int top = y==0 ? 0 : y-1;
                 int bottom = y==height-1 ? height-1 : y+1;
                 int left = x==0 ? 0 : x-1;
                 int right = x==width-1 ? width-1 : x+1;
+                */
+                int top = y==0 ? 0 : y-1;
+                int bottom = y;
+                int left = x==0 ? 0 : x-1;
+                int right = x;
+
 
                 //vertical edges
                 int vertical = -1 * pixels[left][top] + 1 * pixels[right][top] +
@@ -88,6 +94,17 @@ public class ImageProcess {
 
                 int edgeGrayValue = (int)Math.min(255,edgeValues[x][y]);
                 edgeImg.setRGB(x,y,new Color(edgeGrayValue,edgeGrayValue,edgeGrayValue).getRGB());
+
+                /*int edgeValue = 0;
+                if(x>0) {
+                    edgeValue+=Math.abs(pixels[x-1][y]-pixels[x][y])/2;
+
+                }
+                if(y>0) {
+                    edgeValue+=Math.abs(pixels[x][y-1]-pixels[x][y])/2;
+                }
+                edgeValues[x][y] = edgeValue;
+                edgeImg.setRGB(x,y,new Color(edgeValue,edgeValue,edgeValue).getRGB());*/
             }
         }
     }
@@ -115,6 +132,13 @@ public class ImageProcess {
                             line.add(scale(nearMaxEdge.getX(),nearMaxEdge.getY()));//add point to line
                             nearMaxEdge = getNearestEdgeMax((int)nearMaxEdge.getX(),(int)nearMaxEdge.getY());//find next pixel
                         }
+                        /*Point nearEdge = getNearEdge(x,y);
+                        while(nearEdge!=null) {
+                            edgeValues[(int)nearEdge.getX()][(int)nearEdge.getY()] = 0;//get rid of pixel
+                            line.add(scale(nearEdge.getX(),nearEdge.getY()));//add point to line
+                            nearEdge = getNearEdge((int)nearEdge.getX(),(int)nearEdge.getY());
+                        }*/
+
                         //put the line into the list
                         drawing.addLine(line);
                     }
@@ -147,6 +171,23 @@ public class ImageProcess {
         yScaled+=Y_TOP;
         return new Point(xScaled,yScaled);
     }
+
+    /**
+     * Get a nearby edge greater than the threshold
+    *//*
+    private Point getNearEdge(int x,int y) {
+        for(int xoff = -1; xoff<=1;xoff++) {//loop through offsets
+            for (int yoff = -1; yoff <= 1; yoff++) {
+                if (x + xoff >= 0 && x + xoff < width && y + yoff >= 0 && y + yoff < height) {//check within bounds
+                    int edgeValue = edgeValues[x+xoff][y+yoff];
+                    if(edgeValue>THRESHOLD) {
+                        return new Point(x+xoff,y+yoff);
+                    }
+                }
+            }
+        }
+        return null;
+    }*/
 
     /**
      * Find pixel surrounding x,y that has the largest edge value

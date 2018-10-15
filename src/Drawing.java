@@ -92,29 +92,10 @@ public class Drawing {
     }
 
     /**
-     * Save all lines to a file (for testing)
-     */
-    public void saveLinesTest(File file) {
-        try {
-            writer = new PrintWriter(file);
-            for(List<Point> line : lines) {
-                for (Point p : line) {
-                    writer.print(p.getX() + "," + p.getY() + " ");
-                }
-                writer.println();
-            }
-            writer.flush();
-            writer.close();
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Draws a line
      */
-    public void drawLine(double x1, double y1, double x2, double y2) {
-        lines.add(getLine(x1,y1,x2,y2,10));
+    public void drawLine(double x1, double y1, double x2, double y2, int subdivisions) {
+        lines.add(getLine(x1,y1,x2,y2,subdivisions));
     }
 
     /**
@@ -145,8 +126,9 @@ public class Drawing {
         double currentY;
 
         // starts from bottom and goes anti-clockwise
-        for (double rot = 0; rot < 2 * Math.PI; rot += (2 * Math.PI) / subdivisions){
-
+        double rot = 0;
+        for (int i = 0;i<=subdivisions;i++){
+            rot+=(2 * Math.PI) / subdivisions;
             currentX = Math.sin(rot) * radius + centerX;
             currentY = Math.cos(rot) * radius + centerY;
             //System.out.println("point at: " + currentX + ", " + currentY);
