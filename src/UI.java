@@ -77,7 +77,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         currentImage  = null;
         drawing = new Drawing();
         drawing.drawSkynet(-0.3,-1.3,1.7 / 6);
-        drawing.drawRect(-0.4,-1.4,1.7,1.7,50);
+        //drawing.drawRect(-0.4,-1.4,1.7,1.7,400);
         //drawing.drawCircle(-0.3,-1.3,0.5,50);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
