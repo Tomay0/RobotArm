@@ -2,6 +2,8 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +14,7 @@ import java.util.*;
 import java.awt.Color;
 import java.util.List;
 
-public class UI extends JFrame implements ActionListener{
+public class UI extends JFrame implements ActionListener, ChangeListener {
     //SOME CONSTANTS
     private static final String menuBorderTitle = "Menu";
     private static final String displayBorderTitle = "Happiness is an illusion";
@@ -36,12 +38,33 @@ public class UI extends JFrame implements ActionListener{
     private JMenu customizeMenu = new JMenu("Customize");
     private JMenu simMenu = new JMenu("Simulation");
     private JMenu drawMenu = new JMenu("Draw");
+    private JMenu constantsSimMenu = new JMenu("Change Constants for Simulation");
+    private JMenu constantsDrawMenu = new JMenu("Change Constants for Draw");
+
+
     private JMenuItem openMenuItem, saveMenuItem, darkThemeMenuItem, lightThemeMenuItem, socialistThemeMenuItem
             ,runSimMenuItem, drawCircle, drawHorizLine, drawVertLine, drawWord;
+
+    /*Sliders within the change constants sub menus*/
+    private JSlider thresholdSlider, minLinePointSlider, straightLineThresholdSlider, maxLineLengthSlider,
+            penDownSlider, penUpSlider, left0DegSlider, right0DegSlider, leftGradientSlider, rightGradientSlider;
+
     private JScrollPane textOutputAreaScroll;
     private Set<JPanel> panelSet = new HashSet<>();
-    private JSlider thresholdSlider;
     private int theme = 1; //1 = Light Theme, 2 = Dark Theme, 3 = Socialist Theme (Potentially Redundant)
+    /*TODO: Make sliders for the following:
+    ---------- For Simulation Class --------
+    * THRESHOLD
+    * MINIMUM_LINE_POINTS
+    * STRAIGHT_LINE_THRESHOLD
+    * MAX_LINE_LENGTH
+    * ---------For Drawing Class --------
+    * PEN_DOWN
+    * PEN_UP
+    * left0Degrees
+    * right0degrees
+    * leftGradient
+    * rightGradient*/
 
     //MAIN ROBOT ARM STUFF
     private ImageProcess currentImage;
@@ -115,6 +138,8 @@ public class UI extends JFrame implements ActionListener{
         menuBar.add(customizeMenu);
         menuBar.add(simMenu);
         menuBar.add(drawMenu);
+        menuBar.add(constantsSimMenu);
+        menuBar.add(constantsDrawMenu);
         setupMenuBarItems();
         setVisible(true);
     }
@@ -183,6 +208,18 @@ public class UI extends JFrame implements ActionListener{
         socialistThemeMenuItem.addActionListener(this);
         runSimMenuItem.addActionListener(this);
         //TODO: Add action listeners to all the draw menu items
+
+        setupSliders();
+
+    }
+
+    public void setupSliders(){
+        /*Adding sliders for constants in the Simulation class*/
+        thresholdSlider = new JSlider(JSlider.HORIZONTAL);
+        minLinePointSlider = new JSlider(JSlider.HORIZONTAL);
+        constantsSimMenu.add(thresholdSlider);
+        constantsSimMenu.add(minLinePointSlider);
+
     }
 
     public void setupMenuPanel(){
@@ -208,6 +245,10 @@ public class UI extends JFrame implements ActionListener{
         else if(command.equals("Draw Horizontal Line")){}
         else if(command.equals("Draw Vertical Line")){}
         else if(command.equals("Draw Word")){}
+    }
+
+    public void stateChanged(ChangeEvent event){
+        //TODO: Event handling for sliders
     }
 
     /**
