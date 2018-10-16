@@ -276,7 +276,11 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
                 drawing = currentImage.createDrawing();//turn into drawing
                 simulation.setDrawing(drawing);
                 textOutputArea.append("loaded file: " + file.getName() + "\n");
-                textOutputArea.append("Number of lines: " + simulation.getNumberOfLines() + "\n");
+                int numOfLines = simulation.getNumberOfLines();
+                int nunberOfSeconds = (int)((double)numOfLines * 0.257);
+                int numberOfMins = nunberOfSeconds / 60;
+                nunberOfSeconds %= 60;
+                textOutputArea.append("Number of lines: " + numOfLines + ". this will take: " + numberOfMins + "mins and " + nunberOfSeconds + " seconds\n");
 
                 /*Getting image to display onto menuPanel*/
                 menuPanel.removeAll(); //Clears the panel of the image
