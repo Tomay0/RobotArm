@@ -283,7 +283,7 @@ public class ImageProcess {
      * Returns the luminosity for a given colour
      */
     private int getLuminosity(Color color) {
-        return (int)(0.2126*color.getRed() + 0.7152*color.getGreen() + 0.0722*color.getBlue());
+        return (int)(0.299*color.getRed() + 0.587*color.getGreen() + 0.114*color.getBlue());
     }
 
     /**Get Original Image*/

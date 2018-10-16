@@ -41,7 +41,6 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private JMenu constantsSimMenu = new JMenu("Change Constants for Simulation");
     private JMenu constantsDrawMenu = new JMenu("Change Constants for Draw");
 
-
     private JMenuItem openMenuItem, saveMenuItem, darkThemeMenuItem, lightThemeMenuItem, socialistThemeMenuItem
             ,runSimMenuItem, drawCircle, drawHorizLine, drawVertLine, drawWord;
 
@@ -77,8 +76,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     public UI(){
         currentImage  = null;
         drawing = new Drawing();
-        drawing.drawRect(-0.3,-1.3,1,1,50);
-        drawing.drawCircle(-0.3,-1.3,0.5,50);
+        //drawing.drawRect(-0.3,-1.3,1,1,50);
+        //drawing.drawCircle(-0.3,-1.3,0.5,50);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }catch(Exception e) {

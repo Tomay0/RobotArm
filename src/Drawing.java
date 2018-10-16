@@ -45,6 +45,7 @@ public class Drawing {
         writer.println(leftArm + "," + rightArm + "," + (penDown ? PEN_DOWN : PEN_UP));
     }
 
+
     /**
      * Changes if the pen is up or down
      */
@@ -86,6 +87,12 @@ public class Drawing {
         }
     }
 
+    /**
+     * Removes the drawing
+     */
+    public void clearDrawing() {
+        lines.clear();
+    }
     /**
      * Draws a line
      */
