@@ -6,6 +6,7 @@
       <change beforePath="$PROJECT_DIR$/out/production/RobotArm/Drawing.class" afterPath="$PROJECT_DIR$/out/production/RobotArm/Drawing.class" />
       <change beforePath="$PROJECT_DIR$/out/production/RobotArm/UI.class" afterPath="$PROJECT_DIR$/out/production/RobotArm/UI.class" />
       <change beforePath="$PROJECT_DIR$/src/Drawing.java" afterPath="$PROJECT_DIR$/src/Drawing.java" />
+      <change beforePath="$PROJECT_DIR$/src/ImageProcess.java" afterPath="$PROJECT_DIR$/src/ImageProcess.java" />
       <change beforePath="$PROJECT_DIR$/src/UI.java" afterPath="$PROJECT_DIR$/src/UI.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -18,21 +19,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="UI.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="UI.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/UI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="765">
-              <caret line="79" column="10" lean-forward="false" selection-start-line="79" selection-start-column="10" selection-end-line="79" selection-end-column="10" />
+            <state relative-caret-position="119">
+              <caret line="41" column="26" lean-forward="true" selection-start-line="41" selection-start-column="26" selection-end-line="41" selection-end-column="26" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageProcess.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ImageProcess.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ImageProcess.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4199">
-              <caret line="253" column="13" lean-forward="false" selection-start-line="253" selection-start-column="13" selection-end-line="253" selection-end-column="13" />
+            <state relative-caret-position="187">
+              <caret line="17" column="51" lean-forward="false" selection-start-line="17" selection-start-column="51" selection-end-line="17" selection-end-column="51" />
               <folding />
             </state>
           </provider>
@@ -74,9 +75,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/Point.java" />
-        <option value="$PROJECT_DIR$/src/ImageProcess.java" />
         <option value="$PROJECT_DIR$/src/Drawing.java" />
         <option value="$PROJECT_DIR$/src/UI.java" />
+        <option value="$PROJECT_DIR$/src/ImageProcess.java" />
       </list>
     </option>
   </component>
@@ -267,7 +268,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="13541000" />
+    <option name="totallyTimeSpent" value="14325000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="964" y="0" width="1920" height="1044" extended-state="6" />
@@ -282,7 +283,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.07257204" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.07257204" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -571,18 +572,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ImageProcess.java">
+    <entry file="file://$PROJECT_DIR$/src/UI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4199">
-          <caret line="253" column="13" lean-forward="false" selection-start-line="253" selection-start-column="13" selection-end-line="253" selection-end-column="13" />
+        <state relative-caret-position="119">
+          <caret line="41" column="26" lean-forward="true" selection-start-line="41" selection-start-column="26" selection-end-line="41" selection-end-column="26" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/UI.java">
+    <entry file="file://$PROJECT_DIR$/src/ImageProcess.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="79" column="10" lean-forward="false" selection-start-line="79" selection-start-column="10" selection-end-line="79" selection-end-column="10" />
+        <state relative-caret-position="187">
+          <caret line="17" column="51" lean-forward="false" selection-start-line="17" selection-start-column="51" selection-end-line="17" selection-end-column="51" />
           <folding />
         </state>
       </provider>
