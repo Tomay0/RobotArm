@@ -10,19 +10,12 @@ import java.util.List;
  * Represents an image processed to find edges
  */
 public class ImageProcess {
-    public static final double X_LEFT = -0.4;//minimum x the image will be drawn from
-    public static final double Y_TOP = -1.4;//minimum y the image will be drawn from
-    public static final double SIZE = 1.8;//maximum size of the image (width or height)
-    public static final double MAX_LINE_LENGTH = 0.1;//split lines in half if above this length for lines
-    public static final double STRAIGHT_LINE_THRESHOLD = 0.004;//points on a line must be less than many pixels away to be considered straight
-    public static final int MINIMUM_LINE_POINTS = 5;//minimum number of pixels for a line to be drawn (prevents noise)
-
-    private static final int THRESHOLD = 100;//threshold for detecting edges
 
     private int width,height;
 
     private int[][] pixels;//black and white image
     private int[][] edgeValues;//image of edge values
+    private int[][] edgeValuesProcessed;//image of edge values
 
     private BufferedImage originalImg = null;//image of the original
     private BufferedImage edgeImg = null;//image of the edges
@@ -66,6 +59,7 @@ public class ImageProcess {
     public void findEdgeValues() {
         //find edges
         edgeValues = new int[width][height];
+        edgeValuesProcessed = new int[width][height];
         edgeImg = new BufferedImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
 
         for(int y = 0;y<height;y++) {
@@ -116,13 +110,14 @@ public class ImageProcess {
      * Find lines in the image and make a drawing
      */
     public Drawing createDrawing() {
+        for(int x = 0;x<width;x++) for(int y = 0;y<height;y++) edgeValuesProcessed[x][y] = edgeValues[x][y];
         Drawing drawing = new Drawing();
         try {
             //loop
             for(int y = 0;y<height;y++) {
                 for(int x =0;x<width;x++) {
-                    if(edgeValues[x][y]>THRESHOLD) {
-                        edgeValues[x][y] = 0;//get rid of pixel
+                    if(edgeValuesProcessed[x][y]>Constants.THRESHOLD) {
+                        edgeValuesProcessed[x][y] = 0;//get rid of pixel
 
                         //start of line
                         List<Point> line = new ArrayList<>();
@@ -130,8 +125,8 @@ public class ImageProcess {
 
                         //keep adding points to line that surround until none are greater than the threshold
                         Point nearMaxEdge = getNearestEdgeMax(x,y);
-                        while(edgeValues[(int)nearMaxEdge.getX()][(int)nearMaxEdge.getY()] > THRESHOLD) {
-                            edgeValues[(int)nearMaxEdge.getX()][(int)nearMaxEdge.getY()] = 0;//get rid of pixel
+                        while(edgeValuesProcessed[(int)nearMaxEdge.getX()][(int)nearMaxEdge.getY()] > Constants.THRESHOLD) {
+                            edgeValuesProcessed[(int)nearMaxEdge.getX()][(int)nearMaxEdge.getY()] = 0;//get rid of pixel
                             line.add(scale(nearMaxEdge.getX(),nearMaxEdge.getY()));//add point to line
                             nearMaxEdge = getNearestEdgeMax((int)nearMaxEdge.getX(),(int)nearMaxEdge.getY());//find next pixel
                         }
@@ -142,7 +137,7 @@ public class ImageProcess {
                             line.add(scale(nearEdge.getX(),nearEdge.getY()));//add point to line
                             nearEdge = getNearEdge((int)nearEdge.getX(),(int)nearEdge.getY());
                         }*/
-                        if(line.size()<MINIMUM_LINE_POINTS) continue;//discard the line if it has too few points on it
+                        if(line.size()<Constants.MINIMUM_LINE_POINTS) continue;//discard the line if it has too few points on it
                         line = optimizeLine(line);
                         //put the line into the list
                         drawing.addLine(line);
@@ -169,10 +164,10 @@ public class ImageProcess {
             xScaled/=height;
             yScaled/=height;
         }
-        xScaled*=SIZE;
-        yScaled*=SIZE;
-        xScaled+=X_LEFT;
-        yScaled+=Y_TOP;
+        xScaled*=Constants.SIZE;
+        yScaled*=Constants.SIZE;
+        xScaled+=Constants.X_LEFT;
+        yScaled+=Constants.Y_TOP;
         return new Point(xScaled,yScaled);
     }
 
@@ -203,7 +198,7 @@ public class ImageProcess {
         for(int xoff = -1; xoff<=1;xoff++) {//loop through offsets
             for(int yoff = -1; yoff<=1;yoff++) {
                 if(x+xoff >=0 && x+xoff<width && y+yoff>=0 && y+yoff<height) {//check within bounds
-                    int edgeValue = edgeValues[x+xoff][y+yoff];
+                    int edgeValue = edgeValuesProcessed[x+xoff][y+yoff];
                     if(edgeValue>=maxValue) {
                         maxValue = edgeValue;
                         point = new Point(x+xoff,y+yoff);
@@ -222,7 +217,7 @@ public class ImageProcess {
      * Coordinates are draw-space coordinates rather than number of pixels
      *
      */
-    public static List<Point> optimizeLine(List<Point> line) {
+    private List<Point> optimizeLine(List<Point> line) {
         //if the line is 1 or 2 points, this is the most simple it can be
         if(line.size()<3) return line;
 
@@ -232,7 +227,7 @@ public class ImageProcess {
         double lineLength = p1.dist(p2);//distance from p1 to p2
 
         int splitIndex = -1;//where to cut the line segment in half
-        if(lineLength<MAX_LINE_LENGTH) {//if the line is longer than the maximum line length, always split in half
+        if(lineLength<Constants.MAX_LINE_LENGTH) {//if the line is longer than the maximum line length, always split in half
             Point lineVec = new Point(p2.getX()-p1.getX(),p2.getY()-p1.getY());//vector from p1 to p2
 
             double maxDistance = 0;//calculated as the maximum
@@ -247,7 +242,7 @@ public class ImageProcess {
                 double projectDistance = dot/lineLength;//distance from p1 to closest point on line to p
 
                 double distanceFromLine = Math.sqrt(pVecLength * pVecLength - projectDistance * projectDistance);
-                if(distanceFromLine>STRAIGHT_LINE_THRESHOLD && distanceFromLine>maxDistance) {//check that the point is less than the threshold, otherwise take note of the position and find the point with the maximum distance away from the line
+                if(distanceFromLine>Constants.STRAIGHT_LINE_THRESHOLD && distanceFromLine>maxDistance) {//check that the point is less than the threshold, otherwise take note of the position and find the point with the maximum distance away from the line
                     splitIndex = i;
                     maxDistance = distanceFromLine;
                 }

@@ -10,13 +10,6 @@ import java.util.List;
  * Contains methods for saving to a file that can be loaded by the robot arm program
  */
 public class Drawing {
-    //CONSTANTS
-    private static final int PEN_DOWN = 1605;//motor signal for pen down
-    private static final int PEN_UP = PEN_DOWN - 100;//motor signal for pen up
-    private static final int left0degrees = 1780;//motor signal for 0 degrees on the left arm (90 in the program)
-    private static final int right0degrees = 1250;//motor signal for 0 degrees on the right arm (90 in the program)
-    private static final int leftGradient = 10;//linear gradient for the left arm
-    private static final int rightGradient = 10;//linear gradient for the right arm
 
     //THE DRAWING
     //list of lines
@@ -42,7 +35,7 @@ public class Drawing {
      * Prints to the file the current motor signals
      */
     public void print() {
-        writer.println(leftArm + "," + rightArm + "," + (penDown ? PEN_DOWN : PEN_UP));
+        writer.println(leftArm + "," + rightArm + "," + (penDown ? Constants.PEN_DOWN : Constants.PEN_UP));
     }
 
 
@@ -62,8 +55,8 @@ public class Drawing {
         double[] angles = p.calculateAngles();//calculate angles
 
         //calculate motor signals
-        leftArm = (int) (left0degrees + Math.toDegrees(angles[0])*leftGradient);
-        rightArm = (int) (right0degrees + Math.toDegrees(angles[1])*rightGradient);
+        leftArm = (int) (Constants.left0degrees + Math.toDegrees(angles[0])*Constants.leftGradient);
+        rightArm = (int) (Constants.right0degrees + Math.toDegrees(angles[1])*Constants.rightGradient);
         print();
     }
 
@@ -186,24 +179,6 @@ public class Drawing {
         return points;
     }
 
-    ////////GETTERS AND SETTERS///////
-
-
-    /**
-     * Adds a line to the list
-     */
-    public void addLine(List<Point> line) {
-        if(line.size()>1) {
-            lines.add(line);
-        }
-    }
-
-    /**
-     * List of all lines
-     */
-    public List<List<Point>> getLines() {
-        return Collections.unmodifiableList(lines);
-    }
 
 
     /**
@@ -217,7 +192,6 @@ public class Drawing {
         x += draw_N(x, y, size);
         x += draw_E(x, y, size);
         x += draw_T(x, y, size);
-
     }
 
 
@@ -240,12 +214,12 @@ public class Drawing {
         drawLine(x, y + size / 2, x + size / 2, y + size, 50);
         return size * 0.7;
     }
-    public double draw_I(double x, double y, double size){
+    /*public double draw_I(double x, double y, double size){
         drawLine(x + size / 2, y, x + size / 2, y + size, 50);
         drawLine(x, y, x + size, y, 50);
         drawLine(x, y + size, x + size, y + size, 50);
         return size * 1.2;
-    }
+    }*/
     public double draw_Y(double x, double y, double size){
         drawLine(x + size * 0.75, y, x , y + size, 50);
         drawLine(x, y, x + size * 0.75 / 2, y + size / 2, 50);
@@ -268,5 +242,36 @@ public class Drawing {
         drawLine(x + size / 2, y, x + size / 2, y + size, 50);
         drawLine(x, y, x + size, y, 50);
         return size * 1.2;
+    }
+
+    ////////GETTERS AND SETTERS///////
+
+
+    /**
+     * Adds a line to the list
+     */
+    public void addLine(List<Point> line) {
+        if(line.size()>1) {
+            lines.add(line);
+        }
+    }
+
+    /**
+     * List of all lines
+     */
+    public List<List<Point>> getLines() {
+        return Collections.unmodifiableList(lines);
+    }
+
+
+    /**
+     * Get the number of motor controls in the drawing
+     */
+    public int getMotorSignalCount() {
+        int motorSignalCount = 0;
+        for(List<Point> line : lines) {
+            motorSignalCount+=2 + line.size();
+        }
+        return motorSignalCount;
     }
 }

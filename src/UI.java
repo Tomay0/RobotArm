@@ -15,8 +15,8 @@ import java.util.List;
 
 public class UI extends JFrame implements ActionListener, ChangeListener {
     //SOME CONSTANTS
-    private static final String menuBorderTitle = "Menu";
-    private static final String displayBorderTitle = "Happiness is an illusion";
+    private static final String menuBorderTitle = "Image";
+    private static final String displayBorderTitle = "Drawing";
     private static final String textOutBorderTitle = "Text output";
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 800;
@@ -26,7 +26,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private static final int DISPLAY_PANEL_HEIGHT = FRAME_HEIGHT;
     private static final int TEXT_OUT_PANEL_WIDTH = DISPLAY_PANEL_WIDTH;
     private static final int TEXT_OUT_PANEL_HEIGHT = DISPLAY_PANEL_HEIGHT/5;
-    private static final int SIMULATION_SIZE = 600;
+    private static final int SIMULATION_SIZE = 500;
 
     //UI STUFF
     private JPanel menuPanel; //holds buttons and other stuff (tbd)
@@ -38,9 +38,6 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private JMenu simMenu = new JMenu("Simulation");
     private JMenu drawMenu = new JMenu("Draw");
     private JMenu optionsMenu = new JMenu("Options");
-
-    private JMenuItem openMenuItem, saveMenuItem, darkThemeMenuItem, lightThemeMenuItem, socialistThemeMenuItem
-            ,runSimMenuItem, drawCircle, drawLine, drawWord, changeSimConstants, changeMotorConstants;
 
     /*Sliders within the change constants sub menus*/
     private JSlider thresholdSlider, minLinePointSlider, straightLineThresholdSlider, maxLineLengthSlider,
@@ -72,10 +69,10 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
      * Initialise the UI
      */
     public UI(){
+        Constants.loadConstantsFromFile();
         currentImage  = null;
         drawing = new Drawing();
-        //drawing.drawRect(-0.3,-1.3,1,1,50);
-        //drawing.drawCircle(-0.3,-1.3,0.5,50);
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }catch(Exception e) {
@@ -85,7 +82,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
         /*Setup of window*/
         setLayout(new BorderLayout());
-        setTitle("Image Processing");
+        setTitle("Robot Arm Image Processor");
         setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
@@ -93,26 +90,23 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         /*menuPanel setup - Panel to the left*/
         menuPanel = new JPanel();
         menuPanel.setPreferredSize(new Dimension(MENU_PANEL_WIDTH, MENU_PANEL_HEIGHT));
-        menuPanel.setVisible(true);
         menuPanel.setBackground(Color.white);
         menuPanel.setBorder(BorderFactory.createTitledBorder(menuBorderTitle));
 
         /*Display panel setup - Big panel at the center*/
         displayPanel = new JPanel();
         displayPanel.setPreferredSize(new Dimension(DISPLAY_PANEL_WIDTH, DISPLAY_PANEL_HEIGHT));
-        displayPanel.setVisible(true);
         displayPanel.setBackground(Color.white);
         displayPanel.setBorder(BorderFactory.createTitledBorder(displayBorderTitle));
 
         /*Text output panel setup - Panel at the bottom*/
         textOutputArea = new JTextArea();
-        textOutputArea.setPreferredSize(new Dimension(TEXT_OUT_PANEL_WIDTH, TEXT_OUT_PANEL_HEIGHT));
-        textOutputArea.setVisible(true);
-        textOutputArea.setBackground(Color.white);
-        textOutputArea.setBorder(BorderFactory.createTitledBorder(textOutBorderTitle));
         textOutputArea.setEditable(false); //Prevents user from typing into text area
         textOutputAreaScroll = new JScrollPane(textOutputArea); //Adds the panel to the scroll pane - enables scrolling of the panel
+        textOutputAreaScroll.setBackground(Color.white);
         textOutputAreaScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED); //Only allows scrolling when needed
+        textOutputAreaScroll.setPreferredSize(new Dimension(TEXT_OUT_PANEL_WIDTH, TEXT_OUT_PANEL_HEIGHT));
+        textOutputAreaScroll.setBorder(BorderFactory.createTitledBorder(textOutBorderTitle));
 
         /*Adding components to container*/
         container.add(menuPanel, BorderLayout.WEST); //Menu panel to the left of window
@@ -133,10 +127,10 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
         /*Doing the stuff in the menu*/
         menuBar.add(fileMenu);
-        menuBar.add(customizeMenu);
-        menuBar.add(simMenu);
         menuBar.add(drawMenu);
+        menuBar.add(simMenu);
         menuBar.add(optionsMenu);
+        menuBar.add(customizeMenu);
         setupMenuBarItems();
         setVisible(true);
     }
@@ -147,80 +141,95 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     public void setupMenuBarItems(){
 
         /*For file menu*/
-        openMenuItem = new JMenuItem("Open Image");
-        saveMenuItem = new JMenuItem("Save Drawing");
+        /*JMenuItem openMenuItem = new JMenuItem("Open Image");
+        JMenuItem saveMenuItem = new JMenuItem("Save Drawing");
 
-        /*For useless functionality*/
-        darkThemeMenuItem = new JMenuItem("Dark theme :)");
-        lightThemeMenuItem = new JMenuItem("Light Theme :)");
-        socialistThemeMenuItem = new JMenuItem("Socialist Theme :D");
-
-        /*For sim menu*/
-        runSimMenuItem = new JMenuItem("Run Simulation");
-
-        drawWord = new JMenuItem("Draw Word");
-        drawCircle = new JMenuItem("Draw Circle");
-        drawLine = new JMenuItem("Draw Line");
-
-        /*Adding action commands to file menu itmes*/
         openMenuItem.setActionCommand("Open");
         saveMenuItem.setActionCommand("Save");
+        openMenuItem.addActionListener(this);
+        saveMenuItem.addActionListener(this);
 
-        /*Adding to fileMenu*/
         fileMenu.add(openMenuItem);
         fileMenu.add(saveMenuItem);
 
-        /*Adding the useless things into the thing*/
+        /*For useless functionality
+        JMenuItem darkThemeMenuItem = new JMenuItem("Dark theme :)");
+        JMenuItem lightThemeMenuItem = new JMenuItem("Light Theme :)");
+        JMenuItem socialistThemeMenuItem = new JMenuItem("Socialist Theme :D");
+
         customizeMenu.add(darkThemeMenuItem);
         customizeMenu.add(lightThemeMenuItem);
         customizeMenu.add(socialistThemeMenuItem);
-
         darkThemeMenuItem.setActionCommand("Enable Dark Theme");
         lightThemeMenuItem.setActionCommand("Enable Light Theme");
         socialistThemeMenuItem.setActionCommand("Enable Socialist Theme");
+        darkThemeMenuItem.addActionListener(this);
+        lightThemeMenuItem.addActionListener(this);
+        socialistThemeMenuItem.addActionListener(this);
 
-        /*Adding to sim menu*/
+        /*For sim menu
+        JMenuItem runSimMenuItem = new JMenuItem("Run Simulation");
         simMenu.add(runSimMenuItem);
-
-        /*Adding listeners to the sim menu items*/
         runSimMenuItem.setActionCommand("Run Sim");
+        runSimMenuItem.addActionListener(this);
 
-        /*Adding menu items to drawMenu*/
+        //Draw menu
+        JMenuItem drawWord = new JMenuItem("Draw Word");
+        JMenuItem drawCircle = new JMenuItem("Draw Circle");
+        JMenuItem drawVertLine = new JMenuItem("Draw Vertical Line");
+        JMenuItem drawHorLine = new JMenuItem("Draw Horizontal Line");
+        JMenuItem drawRect = new JMenuItem("Draw Rectangle");
+
         drawMenu.add(drawCircle);
         drawMenu.add(drawLine);
         drawMenu.add(drawWord);
 
         drawCircle.setActionCommand("Draw Circle"); //then in actionPerformed - event.getActionCommand()
-        drawLine.setActionCommand("Draw Line");
+        drawVertLine.setActionCommand("Draw Vertical Line");
         drawWord.setActionCommand("Draw Word");
+        drawHorLine.setActionCommand("Draw Horizontal Line");
+        drawRect.setActionCommand("Draw Rectangle");
 
-        changeSimConstants = new JMenuItem("Simulation Constants");
-        changeMotorConstants = new JMenuItem("Motor Constants");
-        changeSimConstants.setActionCommand("Set Simulation Constants");
-        changeMotorConstants.setActionCommand("Set Motor Constants");
-        optionsMenu.add(changeSimConstants);
-        optionsMenu.add(changeMotorConstants);
-
-        /*Adding action listeners to all menu items*/
-        openMenuItem.addActionListener(this);
-        saveMenuItem.addActionListener(this);
-        darkThemeMenuItem.addActionListener(this);
-        lightThemeMenuItem.addActionListener(this);
-        socialistThemeMenuItem.addActionListener(this);
-        runSimMenuItem.addActionListener(this);
         drawLine.addActionListener(this);
         drawCircle.addActionListener(this);
         drawWord.addActionListener(this);
+
+        //Options menu
+        JMenuItem changeSimConstants = new JMenuItem("Image Processing Constants");
+        JMenuItem changeMotorConstants = new JMenuItem("Motor Constants");
+        changeSimConstants.setActionCommand("Set Image Processing Constants");
+        changeMotorConstants.setActionCommand("Set Motor Constants");
         changeSimConstants.addActionListener(this);
         changeMotorConstants.addActionListener(this);
+        optionsMenu.add(changeSimConstants);
+        optionsMenu.add(changeMotorConstants);*/
+        addMenuItem(fileMenu,"Open Image","Open");
+        addMenuItem(fileMenu,"Save Image","Save");
+
+        addMenuItem(drawMenu,"Draw Vertical Line","Draw Vertical Line");
+        addMenuItem(drawMenu,"Draw Horizontal Line","Draw Horizontal Line");
+        addMenuItem(drawMenu,"Draw Rectangle","Draw Rectangle");
+        addMenuItem(drawMenu,"Draw Circle","Draw Circle");
+        addMenuItem(drawMenu,"Draw Word","Draw Word");
+
+        addMenuItem(simMenu,"Start Simulation","Run Sim");
+
+        addMenuItem(optionsMenu,"Image Processing Constants","Set Image Processing Constants");
+        addMenuItem(optionsMenu,"Motor Constants","Set Motor Constants");
+
+        addMenuItem(customizeMenu,"Dark theme :)","Enable Dark Theme");
+        addMenuItem(customizeMenu,"Light Theme :)","Enable Light Theme");
+        addMenuItem(customizeMenu,"Socialist Theme :D","Enable Socialist Theme");
     }
 
-    public void setupMenuPanel(){
-
-    }
-
-    public void setupDisplayScreen(){
-
+    /**
+     * Adds a menu option
+     */
+    private void addMenuItem(JMenu menu, String text, String action) {
+        JMenuItem menuItem = new JMenuItem(text);
+        menuItem.setActionCommand(action);
+        menuItem.addActionListener(this);
+        menu.add(menuItem);
     }
 
     /**
@@ -237,16 +246,30 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         else if(command.equals("Draw Circle")){
             drawing = new Drawing();
             drawing.drawCircle(-0.3,-1.3,0.5,50);
-            updateSim();
+            updateDrawing();
         }
-        else if(command.equals("Draw Line")){
+        else if(command.equals("Draw Vertical Line")){
             drawing = new Drawing();
             drawing.drawLine(0.3, -1.3, 0.3, 0.3, 50);
-            updateSim();
+            updateDrawing();
         }
-        else if(command.equals("Draw Word")){/*drawing.drawWord()*/}
-        else if(command.equals("Set Simulation Constants"))new OptionsWindow("Simulation Constants");
-        else if(command.equals("Set Motor Constants"))new OptionsWindow("Motor Constants");
+        else if(command.equals("Draw Horizontal Line")){
+            drawing = new Drawing();
+            drawing.drawLine(-0.3, -1, 1.3, -1, 50);
+            updateDrawing();
+        }
+        else if(command.equals("Draw Rectangle")){
+            drawing = new Drawing();
+            drawing.drawRect(-0.3, -1.3, 1.7, 1.7, 50);
+            updateDrawing();
+        }
+        else if(command.equals("Draw Word")){
+            drawing = new Drawing();
+            drawing.drawSkynet(-0.3,-1.3,0.25);
+            updateDrawing();
+        }
+        else if(command.equals("Set Image Processing Constants"))new OptionsWindow(this,"Image Processing Constants");
+        else if(command.equals("Set Motor Constants"))new OptionsWindow(this,"Motor Constants");
     }
 
     public void stateChanged(ChangeEvent event){
@@ -272,15 +295,9 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
                 currentImage = null;
                 textOutputArea.append("Unable to read image data from the file you picked.\n");
             }else{
-                //Load successful
-                drawing = currentImage.createDrawing();//turn into drawing
-                simulation.setDrawing(drawing);
                 textOutputArea.append("loaded file: " + file.getName() + "\n");
-                int numOfLines = simulation.getNumberOfLines();
-                int nunberOfSeconds = (int)((double)numOfLines * 0.257);
-                int numberOfMins = nunberOfSeconds / 60;
-                nunberOfSeconds %= 60;
-                textOutputArea.append("Number of lines: " + numOfLines + ". this will take: " + numberOfMins + "mins and " + nunberOfSeconds + " seconds\n");
+                //Load successful
+                updateImage();
 
                 /*Getting image to display onto menuPanel*/
                 menuPanel.removeAll(); //Clears the panel of the image
@@ -303,7 +320,11 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
                 /*Setting the orientation of the label below the icon*/
                 pic.setHorizontalTextPosition(JLabel.CENTER);
                 pic.setVerticalTextPosition(JLabel.BOTTOM);
-                pic.setText("happiness is a joke"); //Label
+                pic.setText("Original image"); //Label
+
+                edgePic.setHorizontalTextPosition(JLabel.CENTER);
+                edgePic.setVerticalTextPosition(JLabel.BOTTOM);
+                edgePic.setText("Edges"); //Label
 
                 menuPanel.add(pic);
                 menuPanel.add(edgePic);
@@ -351,11 +372,11 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         }
 
         /*Changing the color of the text area*/
-        textOutputArea.setBackground(Color.black);
-        TitledBorder newTextAreaBorder = (TitledBorder) textOutputArea.getBorder();
+        textOutputAreaScroll.setBackground(Color.black);
+        TitledBorder newTextAreaBorder = (TitledBorder) textOutputAreaScroll.getBorder();
         newTextAreaBorder.setTitleColor(Color.white);
-        textOutputArea.setBorder(newTextAreaBorder);
-        textOutputArea.setForeground(Color.white); //Changes text color
+        textOutputAreaScroll.setBorder(newTextAreaBorder);
+        textOutputAreaScroll.setForeground(Color.white); //Changes text color
 
         theme = 2;
         simulation.redraw();
@@ -377,11 +398,11 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         }
 
         /*Changing the color of the text area*/
-        textOutputArea.setBackground(Color.white);
-        TitledBorder newTextAreaBorder = (TitledBorder) textOutputArea.getBorder();
+        textOutputAreaScroll.setBackground(Color.white);
+        TitledBorder newTextAreaBorder = (TitledBorder) textOutputAreaScroll.getBorder();
         newTextAreaBorder.setTitleColor(Color.black);
-        textOutputArea.setBorder(newTextAreaBorder);
-        textOutputArea.setForeground(Color.black); //Changes text color
+        textOutputAreaScroll.setBorder(newTextAreaBorder);
+        textOutputAreaScroll.setForeground(Color.black); //Changes text color
 
         theme = 1;
         simulation.redraw();
@@ -402,19 +423,37 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         }
 
         /*Changing the color of the text area*/
-        textOutputArea.setBackground(Color.red);
-        TitledBorder newTextAreaBorder = (TitledBorder) textOutputArea.getBorder();
+        textOutputAreaScroll.setBackground(Color.red);
+        TitledBorder newTextAreaBorder = (TitledBorder) textOutputAreaScroll.getBorder();
         newTextAreaBorder.setTitleColor(Color.yellow);
-        textOutputArea.setBorder(newTextAreaBorder);
-        textOutputArea.setForeground(Color.yellow); //Changes text color
+        textOutputAreaScroll.setBorder(newTextAreaBorder);
+        textOutputAreaScroll.setForeground(Color.yellow); //Changes text color
 
         theme = 3;
         simulation.redraw();
 
     }
 
-    public void updateSim(){
+    /**
+     * Create a drawing from the loaded image and update the simulation
+     */
+    public void updateImage() {
+        if(currentImage!=null) {
+            drawing = currentImage.createDrawing();
+            updateDrawing();
+        }
+    }
+
+    /**
+     * Updates drawing in the simulation and tells you number of lines, number of control signals and estimated drawing time
+     */
+    public void updateDrawing() {
+        int controlCount = drawing.getMotorSignalCount();
+        int s = (int)Math.round(controlCount/5.0);
+        int m = (int)(s/60);
+        s = s%60;
         simulation.setDrawing(drawing);
+        textOutputArea.append("Created drawing from image with " + simulation.getNumberOfLines() + " lines and " + controlCount + " control signals.\nEstimated drawing time of at least least " + m + ":" + s + "\n");
     }
 
     /*Getters*/
