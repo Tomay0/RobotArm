@@ -1,4 +1,3 @@
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -27,7 +26,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private static final int DISPLAY_PANEL_HEIGHT = FRAME_HEIGHT;
     private static final int TEXT_OUT_PANEL_WIDTH = DISPLAY_PANEL_WIDTH;
     private static final int TEXT_OUT_PANEL_HEIGHT = DISPLAY_PANEL_HEIGHT/5;
-    private static final int SIMULATION_SIZE = 500;
+    private static final int SIMULATION_SIZE = 600;
 
     //UI STUFF
     private JPanel menuPanel; //holds buttons and other stuff (tbd)
@@ -38,11 +37,10 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private JMenu customizeMenu = new JMenu("Customize");
     private JMenu simMenu = new JMenu("Simulation");
     private JMenu drawMenu = new JMenu("Draw");
-    private JMenu constantsSimMenu = new JMenu("Change Constants for Simulation");
-    private JMenu constantsDrawMenu = new JMenu("Change Constants for Draw");
+    private JMenu optionsMenu = new JMenu("Options");
 
     private JMenuItem openMenuItem, saveMenuItem, darkThemeMenuItem, lightThemeMenuItem, socialistThemeMenuItem
-            ,runSimMenuItem, drawCircle, drawHorizLine, drawVertLine, drawWord;
+            ,runSimMenuItem, drawCircle, drawLine, drawWord, changeSimConstants, changeMotorConstants;
 
     /*Sliders within the change constants sub menus*/
     private JSlider thresholdSlider, minLinePointSlider, straightLineThresholdSlider, maxLineLengthSlider,
@@ -76,8 +74,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     public UI(){
         currentImage  = null;
         drawing = new Drawing();
-        drawing.drawSkynet(-0.3,-1.3,1.7 / 6);
-        //drawing.drawRect(-0.4,-1.4,1.7,1.7,400);
+        //drawing.drawRect(-0.3,-1.3,1,1,50);
         //drawing.drawCircle(-0.3,-1.3,0.5,50);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -91,6 +88,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         setTitle("Image Processing");
         setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
 
         /*menuPanel setup - Panel to the left*/
         menuPanel = new JPanel();
@@ -138,8 +136,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         menuBar.add(customizeMenu);
         menuBar.add(simMenu);
         menuBar.add(drawMenu);
-        menuBar.add(constantsSimMenu);
-        menuBar.add(constantsDrawMenu);
+        menuBar.add(optionsMenu);
         setupMenuBarItems();
         setVisible(true);
     }
@@ -163,8 +160,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
         drawWord = new JMenuItem("Draw Word");
         drawCircle = new JMenuItem("Draw Circle");
-        drawVertLine = new JMenuItem("Draw Vertical Line");
-        drawHorizLine = new JMenuItem("Draw Horizontal Line");
+        drawLine = new JMenuItem("Draw Line");
 
         /*Adding action commands to file menu itmes*/
         openMenuItem.setActionCommand("Open");
@@ -191,14 +187,19 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
         /*Adding menu items to drawMenu*/
         drawMenu.add(drawCircle);
-        drawMenu.add(drawHorizLine);
+        drawMenu.add(drawLine);
         drawMenu.add(drawWord);
-        drawMenu.add(drawVertLine);
 
         drawCircle.setActionCommand("Draw Circle"); //then in actionPerformed - event.getActionCommand()
-        drawHorizLine.setActionCommand("Draw Horizontal Line");
-        drawVertLine.setActionCommand("Draw Vertical Line");
+        drawLine.setActionCommand("Draw Line");
         drawWord.setActionCommand("Draw Word");
+
+        changeSimConstants = new JMenuItem("Simulation Constants");
+        changeMotorConstants = new JMenuItem("Motor Constants");
+        changeSimConstants.setActionCommand("Set Simulation Constants");
+        changeMotorConstants.setActionCommand("Set Motor Constants");
+        optionsMenu.add(changeSimConstants);
+        optionsMenu.add(changeMotorConstants);
 
         /*Adding action listeners to all menu items*/
         openMenuItem.addActionListener(this);
@@ -207,19 +208,11 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         lightThemeMenuItem.addActionListener(this);
         socialistThemeMenuItem.addActionListener(this);
         runSimMenuItem.addActionListener(this);
-        //TODO: Add action listeners to all the draw menu items
-
-        setupSliders();
-
-    }
-
-    public void setupSliders(){
-        /*Adding sliders for constants in the Simulation class*/
-        thresholdSlider = new JSlider(JSlider.HORIZONTAL);
-        minLinePointSlider = new JSlider(JSlider.HORIZONTAL);
-        constantsSimMenu.add(thresholdSlider);
-        constantsSimMenu.add(minLinePointSlider);
-
+        drawLine.addActionListener(this);
+        drawCircle.addActionListener(this);
+        drawWord.addActionListener(this);
+        changeSimConstants.addActionListener(this);
+        changeMotorConstants.addActionListener(this);
     }
 
     public void setupMenuPanel(){
@@ -241,10 +234,19 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         else if(command.equals("Enable Light Theme")) enableLightTheme();
         else if(command.equals("Enable Socialist Theme"))enableSocialistTheme();
         else if(command.equals("Run Sim"))runSim();
-        else if(command.equals("Draw Circle")){}
-        else if(command.equals("Draw Horizontal Line")){}
-        else if(command.equals("Draw Vertical Line")){}
-        else if(command.equals("Draw Word")){}
+        else if(command.equals("Draw Circle")){
+            drawing = new Drawing();
+            drawing.drawCircle(-0.3,-1.3,0.5,50);
+            updateSim();
+        }
+        else if(command.equals("Draw Line")){
+            drawing = new Drawing();
+            drawing.drawLine(0.3, -1.3, 0.3, 0.3, 50);
+            updateSim();
+        }
+        else if(command.equals("Draw Word")){/*drawing.drawWord()*/}
+        else if(command.equals("Set Simulation Constants"))new OptionsWindow("Simulation Constants");
+        else if(command.equals("Set Motor Constants"))new OptionsWindow("Motor Constants");
     }
 
     public void stateChanged(ChangeEvent event){
@@ -323,8 +325,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         }else{
             //Save
             File file = saveFileChooser.getSelectedFile();
-            drawing.saveLines(file);
-            textOutputArea.append("Saved drawing.\n");
+            textOutputArea.append("No drawing created\n");
         }
     }
 
@@ -408,6 +409,10 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
     }
 
+    public void updateSim(){
+        simulation.setDrawing(drawing);
+    }
+
     /*Getters*/
     public int getTheme(){
         return theme;
@@ -418,3 +423,5 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         UI ui = new UI();
     }
 }
+
+
