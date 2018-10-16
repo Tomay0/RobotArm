@@ -27,7 +27,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private static final int DISPLAY_PANEL_HEIGHT = FRAME_HEIGHT;
     private static final int TEXT_OUT_PANEL_WIDTH = DISPLAY_PANEL_WIDTH;
     private static final int TEXT_OUT_PANEL_HEIGHT = DISPLAY_PANEL_HEIGHT/5;
-    private static final int SIMULATION_SIZE = 600;
+    private static final int SIMULATION_SIZE = 500;
 
     //UI STUFF
     private JPanel menuPanel; //holds buttons and other stuff (tbd)
@@ -76,8 +76,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     public UI(){
         currentImage  = null;
         drawing = new Drawing();
-        drawing.drawSkynet(-0.3,-1.3,0.1);
-        //drawing.drawRect(-0.3,-1.3,1,1,50);
+        drawing.drawSkynet(-0.3,-1.3,1.7 / 6);
+        drawing.drawRect(-0.4,-1.4,1.7,1.7,50);
         //drawing.drawCircle(-0.3,-1.3,0.5,50);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -323,7 +323,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         }else{
             //Save
             File file = saveFileChooser.getSelectedFile();
-            textOutputArea.append("No drawing created\n");
+            drawing.saveLines(file);
+            textOutputArea.append("Saved drawing.\n");
         }
     }
 

@@ -11,12 +11,12 @@ import java.util.List;
  */
 public class Drawing {
     //CONSTANTS
-    private static final int PEN_DOWN = 900;//motor signal for pen down
-    private static final int PEN_UP = 800;//motor signal for pen up
-    private static final int left0degrees = 1775;//motor signal for 0 degrees on the left arm (90 in the program)
-    private static final int right0degrees = 1260;//motor signal for 0 degrees on the right arm (90 in the program)
-    private static final int leftGradient = 200/22;//linear gradient for the left arm
-    private static final int rightGradient = 200/20;//linear gradient for the right arm
+    private static final int PEN_DOWN = 1590;//motor signal for pen down
+    private static final int PEN_UP = PEN_DOWN - 100;//motor signal for pen up
+    private static final int left0degrees = 1780;//motor signal for 0 degrees on the left arm (90 in the program)
+    private static final int right0degrees = 1250;//motor signal for 0 degrees on the right arm (90 in the program)
+    private static final int leftGradient = 10;//linear gradient for the left arm
+    private static final int rightGradient = 10;//linear gradient for the right arm
 
     //THE DRAWING
     //list of lines
@@ -197,8 +197,8 @@ public class Drawing {
      * draws letter and returns letter space
      */
     public double draw_S(double x, double y, double size){
-        drawArc(x, y, size / 4, Math.PI * 2, Math.PI * 0.75, 40);
-        drawArc(x, y + size / 2, size / 4, Math.PI, - Math.PI / 4, 40);
+        drawArc(x, y, size / 4, Math.PI * 0.75,Math.PI * 2, 15);
+        drawArc(x, y + size / 2, size / 4, -Math.PI/4,Math.PI, 15);
         return size * 0.7;
     }
     public double draw_K(double x, double y, double size){
