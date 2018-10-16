@@ -178,11 +178,14 @@ public class Drawing {
     }
 
 
-
+    /**
+     * Draws the word "SKYNET"
+     * size is the width/height of letters. x,y is the top left corner
+     */
     public void drawSkynet(double x, double y, double size){
         x += draw_S(x, y, size);
         x += draw_K(x, y, size);
-        x += draw_I(x, y, size);
+        x += draw_Y(x, y, size);
         x += draw_N(x, y, size);
         x += draw_E(x, y, size);
         x += draw_T(x, y, size);
@@ -194,36 +197,43 @@ public class Drawing {
      * draws letter and returns letter space
      */
     public double draw_S(double x, double y, double size){
-        return 0;
+        drawArc(x, y, size / 4, Math.PI * 2, Math.PI, 40);
+        //drawArc(x + size / 2, y, size / 2, Math.PI, Math.PI * 2, 40);
+        return size * 0.7;
     }
     public double draw_K(double x, double y, double size){
         drawLine(x, y, x, y + size, 10);
         drawLine(x, y + size / 2, x + size, y, 10);
         drawLine(x, y + size / 2, x + size, y + size, 10);
-        return size * 1.1;
+        return size * 1.2;
     }
     public double draw_I(double x, double y, double size){
         drawLine(x + size / 2, y, x + size / 2, y + size, 10);
         drawLine(x, y, x + size, y, 10);
         drawLine(x, y + size, x + size, y + size, 10);
-        return size * 1.1;
+        return size * 1.2;
+    }
+    public double draw_Y(double x, double y, double size){
+        drawLine(x + size, y, x , y + size, 10);
+        drawLine(x, y, x + size / 2, y + size / 2, 10);
+        return size * 1.2;
     }
     public double draw_N(double x, double y, double size){
         drawLine(x , y, x, y + size, 10);
         drawLine(x + size, y, x + size, y + size, 10);
         drawLine(x, y, x + size, y + size, 10);
-        return size * 1.1;
+        return size * 1.2;
     }
     public double draw_E(double x, double y, double size){
         drawLine(x, y, x, y + size, 10);
         drawLine(x, y, x + size, y, 10);
         drawLine(x, y + size / 2, x + size / 2, y + size / 2, 10);
         drawLine(x, y + size, x + size, y + size, 10);
-        return size * 1.1;
+        return size * 1.2;
     }
     public double draw_T(double x, double y, double size){
         drawLine(x + size / 2, y, x + size / 2, y + size, 10);
         drawLine(x, y, x + size, y, 10);
-        return size * 1.1;
+        return size * 1.2;
     }
 }
