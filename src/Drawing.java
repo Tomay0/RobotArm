@@ -173,8 +173,10 @@ public class Drawing {
      */
     public List<Point> getLine(double x1, double y1, double x2, double y2, int subdivisions) {
         List<Point> points = new ArrayList<>();
-        for(double t = 0;t<=1;t+=1.0/subdivisions) {
+        double t = 0;
+        for(int i = 0;i<=subdivisions;i++) {
             points.add(new Point(x1 * (1-t) + x2 * t,y1 * (1-t) + y2 * t));
+            t+=1.0/subdivisions;
         }
         return points;
     }
