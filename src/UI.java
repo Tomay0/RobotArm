@@ -377,6 +377,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         newTextAreaBorder.setTitleColor(Color.white);
         textOutputAreaScroll.setBorder(newTextAreaBorder);
         textOutputAreaScroll.setForeground(Color.white); //Changes text color
+        textOutputArea.setForeground(Color.white);
+        textOutputArea.setBackground(Color.black);
 
         theme = 2;
         simulation.redraw();
@@ -403,6 +405,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         newTextAreaBorder.setTitleColor(Color.black);
         textOutputAreaScroll.setBorder(newTextAreaBorder);
         textOutputAreaScroll.setForeground(Color.black); //Changes text color
+        textOutputArea.setForeground(Color.black);
+        textOutputArea.setBackground(Color.white);
 
         theme = 1;
         simulation.redraw();
@@ -419,7 +423,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
             TitledBorder newBorder = (TitledBorder) panel.getBorder(); //panel.getBorder() returns Border type - need to cast to TitledBorder type
             newBorder.setTitleColor(Color.yellow);
             panel.setBorder(newBorder);
-            textOutputArea.setText("OUR UI");
+            textOutputArea.setText("OUR UI\n");
         }
 
         /*Changing the color of the text area*/
@@ -428,6 +432,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         newTextAreaBorder.setTitleColor(Color.yellow);
         textOutputAreaScroll.setBorder(newTextAreaBorder);
         textOutputAreaScroll.setForeground(Color.yellow); //Changes text color
+        textOutputArea.setForeground(Color.yellow);
+        textOutputArea.setBackground(Color.red);
 
         theme = 3;
         simulation.redraw();
