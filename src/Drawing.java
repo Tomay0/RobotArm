@@ -113,9 +113,9 @@ public class Drawing {
     }
 
     /**
-     * Draws a circle
+     * Draws a an Arc
      */
-    public void drawCircle(double x1, double y1, double radius, int subdivisions) {
+    public void drawArc(double x1, double y1, double radius, double from, double to, int subdivisions) {
         List<Point> points = new ArrayList<>();
         // getting center
         double centerX = x1 + radius;
@@ -128,9 +128,9 @@ public class Drawing {
         double currentY;
 
         // starts from bottom and goes anti-clockwise
-        double rot = 0;
-        for (int i = 0;i<=subdivisions;i++){
-            rot+=(2 * Math.PI) / subdivisions;
+        double rot = from;
+        for (int i = 0; i <= subdivisions; i++){
+            rot += (to-from) / subdivisions;
             currentX = Math.sin(rot) * radius + centerX;
             currentY = Math.cos(rot) * radius + centerY;
             //System.out.println("point at: " + currentX + ", " + currentY);
@@ -138,6 +138,13 @@ public class Drawing {
             points.add(new Point(currentX,currentY));
         }
         lines.add(points);
+    }
+
+    /**
+     * Draws a circle
+     */
+    public void drawCircle(double x1, double y1, double radius, int subdivisions) {
+        drawArc(x1, y1, radius, 0, 2 * Math.PI, subdivisions);
     }
 
     /**
@@ -168,5 +175,55 @@ public class Drawing {
      */
     public List<List<Point>> getLines() {
         return Collections.unmodifiableList(lines);
+    }
+
+
+
+    public void drawSkynet(double x, double y, double size){
+        x += draw_S(x, y, size);
+        x += draw_K(x, y, size);
+        x += draw_I(x, y, size);
+        x += draw_N(x, y, size);
+        x += draw_E(x, y, size);
+        x += draw_T(x, y, size);
+
+    }
+
+
+    /**
+     * draws letter and returns letter space
+     */
+    public double draw_S(double x, double y, double size){
+        return 0;
+    }
+    public double draw_K(double x, double y, double size){
+        drawLine(x, y, x, y + size, 10);
+        drawLine(x, y + size / 2, x + size, y, 10);
+        drawLine(x, y + size / 2, x + size, y + size, 10);
+        return size * 1.1;
+    }
+    public double draw_I(double x, double y, double size){
+        drawLine(x + size / 2, y, x + size / 2, y + size, 10);
+        drawLine(x, y, x + size, y, 10);
+        drawLine(x, y + size, x + size, y + size, 10);
+        return size * 1.1;
+    }
+    public double draw_N(double x, double y, double size){
+        drawLine(x , y, x, y + size, 10);
+        drawLine(x + size, y, x + size, y + size, 10);
+        drawLine(x, y, x + size, y + size, 10);
+        return size * 1.1;
+    }
+    public double draw_E(double x, double y, double size){
+        drawLine(x, y, x, y + size, 10);
+        drawLine(x, y, x + size, y, 10);
+        drawLine(x, y + size / 2, x + size / 2, y + size / 2, 10);
+        drawLine(x, y + size, x + size, y + size, 10);
+        return size * 1.1;
+    }
+    public double draw_T(double x, double y, double size){
+        drawLine(x + size / 2, y, x + size / 2, y + size, 10);
+        drawLine(x, y, x + size, y, 10);
+        return size * 1.1;
     }
 }
