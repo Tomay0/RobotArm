@@ -411,10 +411,10 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
      * EXTREMELY IMPORTANT METHOD: Plays the USSR National Anthem
      * */
     public void playAnthem(){
-        InputStream inputStream;
+        InputStream входПоток;
         try{
-            inputStream = new FileInputStream("anthem.wav");
-            beautifulAnthem = new AudioStream(inputStream);
+            входПоток = new FileInputStream("anthem.wav");
+            beautifulAnthem = new AudioStream(входПоток);
             AudioPlayer.player.start(beautifulAnthem);
         }catch(Exception e){e.printStackTrace();}
     }
