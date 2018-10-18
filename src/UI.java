@@ -1,3 +1,6 @@
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -8,7 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.awt.Color;
 import java.util.List;
@@ -31,6 +36,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     /*Potentially REDundant (tbd)*/
     public static final Color SOCIALIST_RED = new Color(205, 0, 0);
     public static final Color SOCIALIST_YELLOW = new Color(255, 216, 0);
+    private AudioStream beautifulAnthem;
 
     //UI STUFF
     private JPanel menuPanel; //holds buttons and other stuff (tbd)
@@ -314,6 +320,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
         theme = 2;
         simulation.redraw();
+        stopAnthem();
     }
 
     /**
@@ -344,6 +351,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
         theme = 1;
         simulation.redraw();
+        stopAnthem();
 
     }
 
@@ -373,6 +381,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
         theme = 3;
         simulation.redraw();
+        playAnthem();
 
     }
 
@@ -396,6 +405,27 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         s = s%60;
         simulation.setDrawing(drawing);
         textOutputArea.append("Created drawing from image with " + simulation.getNumberOfLines() + " lines and " + controlCount + " control signals.\nEstimated drawing time of at least least " + m + ":" + s + "\n");
+    }
+
+    /**
+     * EXTREMELY IMPORTANT METHOD: Plays the USSR National Anthem
+     * */
+    public void playAnthem(){
+        InputStream inputStream;
+        try{
+            inputStream = new FileInputStream("anthem.wav");
+            beautifulAnthem = new AudioStream(inputStream);
+            AudioPlayer.player.start(beautifulAnthem);
+        }catch(Exception e){e.printStackTrace();}
+    }
+
+    /**
+     * Stops playing the anthem :(
+     * */
+    public void stopAnthem(){
+        try {
+            if (beautifulAnthem != null)AudioPlayer.player.stop(beautifulAnthem);
+        }catch(Exception e){e.printStackTrace();}
     }
 
     /*Getters*/
