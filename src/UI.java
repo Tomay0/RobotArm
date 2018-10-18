@@ -28,6 +28,10 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private static final int TEXT_OUT_PANEL_HEIGHT = DISPLAY_PANEL_HEIGHT/5;
     private static final int SIMULATION_SIZE = 500;
 
+    /*Potentially REDundant (tbd)*/
+    public static final Color SOCIALIST_RED = new Color(205, 0, 0);
+    public static final Color SOCIALIST_YELLOW = new Color(255, 216, 0);
+
     //UI STUFF
     private JPanel menuPanel; //holds buttons and other stuff (tbd)
     private JPanel displayPanel; //Will display simulation and other things (tbd)
@@ -38,6 +42,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private JMenu simMenu = new JMenu("Simulation");
     private JMenu drawMenu = new JMenu("Draw");
     private JMenu optionsMenu = new JMenu("Options");
+    private JLabel origPic = new JLabel();
+    private JLabel edgePic = new JLabel();
 
     /*Sliders within the change constants sub menus*/
     private JSlider thresholdSlider, minLinePointSlider, straightLineThresholdSlider, maxLineLengthSlider,
@@ -46,19 +52,6 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private JScrollPane textOutputAreaScroll;
     private Set<JPanel> panelSet = new HashSet<>();
     private int theme = 1; //1 = Light Theme, 2 = Dark Theme, 3 = Socialist Theme (Potentially Redundant)
-    /*TODO: Make sliders for the following:
-    ---------- For Simulation Class --------
-    * THRESHOLD
-    * MINIMUM_LINE_POINTS
-    * STRAIGHT_LINE_THRESHOLD
-    * MAX_LINE_LENGTH
-    * ---------For Drawing Class --------
-    * PEN_DOWN
-    * PEN_UP
-    * left0Degrees
-    * right0degrees
-    * leftGradient
-    * rightGradient*/
 
     //MAIN ROBOT ARM STUFF
     private ImageProcess currentImage;
@@ -139,72 +132,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
      * Init menu
      */
     public void setupMenuBarItems(){
-
-        /*For file menu*/
-        /*JMenuItem openMenuItem = new JMenuItem("Open Image");
-        JMenuItem saveMenuItem = new JMenuItem("Save Drawing");
-
-        openMenuItem.setActionCommand("Open");
-        saveMenuItem.setActionCommand("Save");
-        openMenuItem.addActionListener(this);
-        saveMenuItem.addActionListener(this);
-
-        fileMenu.add(openMenuItem);
-        fileMenu.add(saveMenuItem);
-
-        /*For useless functionality
-        JMenuItem darkThemeMenuItem = new JMenuItem("Dark theme :)");
-        JMenuItem lightThemeMenuItem = new JMenuItem("Light Theme :)");
-        JMenuItem socialistThemeMenuItem = new JMenuItem("Socialist Theme :D");
-
-        customizeMenu.add(darkThemeMenuItem);
-        customizeMenu.add(lightThemeMenuItem);
-        customizeMenu.add(socialistThemeMenuItem);
-        darkThemeMenuItem.setActionCommand("Enable Dark Theme");
-        lightThemeMenuItem.setActionCommand("Enable Light Theme");
-        socialistThemeMenuItem.setActionCommand("Enable Socialist Theme");
-        darkThemeMenuItem.addActionListener(this);
-        lightThemeMenuItem.addActionListener(this);
-        socialistThemeMenuItem.addActionListener(this);
-
-        /*For sim menu
-        JMenuItem runSimMenuItem = new JMenuItem("Run Simulation");
-        simMenu.add(runSimMenuItem);
-        runSimMenuItem.setActionCommand("Run Sim");
-        runSimMenuItem.addActionListener(this);
-
-        //Draw menu
-        JMenuItem drawWord = new JMenuItem("Draw Word");
-        JMenuItem drawCircle = new JMenuItem("Draw Circle");
-        JMenuItem drawVertLine = new JMenuItem("Draw Vertical Line");
-        JMenuItem drawHorLine = new JMenuItem("Draw Horizontal Line");
-        JMenuItem drawRect = new JMenuItem("Draw Rectangle");
-
-        drawMenu.add(drawCircle);
-        drawMenu.add(drawLine);
-        drawMenu.add(drawWord);
-
-        drawCircle.setActionCommand("Draw Circle"); //then in actionPerformed - event.getActionCommand()
-        drawVertLine.setActionCommand("Draw Vertical Line");
-        drawWord.setActionCommand("Draw Word");
-        drawHorLine.setActionCommand("Draw Horizontal Line");
-        drawRect.setActionCommand("Draw Rectangle");
-
-        drawLine.addActionListener(this);
-        drawCircle.addActionListener(this);
-        drawWord.addActionListener(this);
-
-        //Options menu
-        JMenuItem changeSimConstants = new JMenuItem("Image Processing Constants");
-        JMenuItem changeMotorConstants = new JMenuItem("Motor Constants");
-        changeSimConstants.setActionCommand("Set Image Processing Constants");
-        changeMotorConstants.setActionCommand("Set Motor Constants");
-        changeSimConstants.addActionListener(this);
-        changeMotorConstants.addActionListener(this);
-        optionsMenu.add(changeSimConstants);
-        optionsMenu.add(changeMotorConstants);*/
         addMenuItem(fileMenu,"Open Image","Open");
-        addMenuItem(fileMenu,"Save Image","Save");
+        addMenuItem(fileMenu,"Save Drawing","Save");
 
         addMenuItem(drawMenu,"Draw Vertical Line","Draw Vertical Line");
         addMenuItem(drawMenu,"Draw Horizontal Line","Draw Horizontal Line");
@@ -314,19 +243,19 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
                 else scale = maxSize/height;
 
                 //scaled picture
-                JLabel pic = new JLabel(new ImageIcon(openedImg.getScaledInstance((int)(width*scale), (int)(height*scale), Image.SCALE_FAST)));
-                JLabel edgePic = new JLabel(new ImageIcon(edgeImg.getScaledInstance((int)(width*scale), (int)(height*scale), Image.SCALE_FAST)));
+                origPic = new JLabel(new ImageIcon(openedImg.getScaledInstance((int)(width*scale), (int)(height*scale), Image.SCALE_FAST)));
+                edgePic = new JLabel(new ImageIcon(edgeImg.getScaledInstance((int)(width*scale), (int)(height*scale), Image.SCALE_FAST)));
 
                 /*Setting the orientation of the label below the icon*/
-                pic.setHorizontalTextPosition(JLabel.CENTER);
-                pic.setVerticalTextPosition(JLabel.BOTTOM);
-                pic.setText("Original image"); //Label
+                origPic.setHorizontalTextPosition(JLabel.CENTER);
+                origPic.setVerticalTextPosition(JLabel.BOTTOM);
+                origPic.setText("Original image"); //Label
 
                 edgePic.setHorizontalTextPosition(JLabel.CENTER);
                 edgePic.setVerticalTextPosition(JLabel.BOTTOM);
                 edgePic.setText("Edges"); //Label
 
-                menuPanel.add(pic);
+                menuPanel.add(origPic);
                 menuPanel.add(edgePic);
                 menuPanel.updateUI(); //Reshowing panel components
                 revalidate();
@@ -350,7 +279,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         }else{
             //Save
             File file = saveFileChooser.getSelectedFile();
-            textOutputArea.append("No drawing created\n");
+            drawing.saveLines(file);
+            textOutputArea.append("Drawing saved.\n");
         }
     }
 
@@ -379,6 +309,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         textOutputAreaScroll.setForeground(Color.white); //Changes text color
         textOutputArea.setForeground(Color.white);
         textOutputArea.setBackground(Color.black);
+        origPic.setForeground(Color.white);
+        edgePic.setForeground(Color.white);
 
         theme = 2;
         simulation.redraw();
@@ -407,6 +339,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         textOutputAreaScroll.setForeground(Color.black); //Changes text color
         textOutputArea.setForeground(Color.black);
         textOutputArea.setBackground(Color.white);
+        origPic.setForeground(Color.black);
+        edgePic.setForeground(Color.black);
 
         theme = 1;
         simulation.redraw();
@@ -417,23 +351,25 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     public void enableSocialistTheme(){
 
         for(JPanel panel : panelSet){
-            panel.setBackground(Color.red);
+            panel.setBackground(SOCIALIST_RED);
 
             /*Turning border title color white*/
             TitledBorder newBorder = (TitledBorder) panel.getBorder(); //panel.getBorder() returns Border type - need to cast to TitledBorder type
-            newBorder.setTitleColor(Color.yellow);
+            newBorder.setTitleColor(SOCIALIST_YELLOW);
             panel.setBorder(newBorder);
-            textOutputArea.setText("OUR UI\n");
+            textOutputArea.append("OUR UI\n");
         }
 
         /*Changing the color of the text area*/
-        textOutputAreaScroll.setBackground(Color.red);
+        textOutputAreaScroll.setBackground(SOCIALIST_RED);
         TitledBorder newTextAreaBorder = (TitledBorder) textOutputAreaScroll.getBorder();
-        newTextAreaBorder.setTitleColor(Color.yellow);
+        newTextAreaBorder.setTitleColor(SOCIALIST_YELLOW);
         textOutputAreaScroll.setBorder(newTextAreaBorder);
-        textOutputAreaScroll.setForeground(Color.yellow); //Changes text color
-        textOutputArea.setForeground(Color.yellow);
-        textOutputArea.setBackground(Color.red);
+        textOutputAreaScroll.setForeground(SOCIALIST_YELLOW); //Changes text color
+        textOutputArea.setForeground(SOCIALIST_YELLOW);
+        textOutputArea.setBackground(SOCIALIST_RED);
+        origPic.setForeground(SOCIALIST_YELLOW);
+        edgePic.setForeground(SOCIALIST_YELLOW);
 
         theme = 3;
         simulation.redraw();

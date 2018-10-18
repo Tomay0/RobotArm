@@ -20,9 +20,9 @@ public class ImageProcess {
     private BufferedImage originalImg = null;//image of the original
     private BufferedImage edgeImg = null;//image of the edges
 
-    /**
+   /**
      * Process an image
-     */
+     */ /***/
     public ImageProcess(File file) {
         try {
             load(file);//load image

@@ -56,7 +56,7 @@ public class Simulation implements Runnable{
                 if(ui.getTheme() == 1) {
                     image.setRGB(x, y, Color.WHITE.getRGB());//set image to blank white
                 }else if(ui.getTheme() == 2) {image.setRGB(x, y, Color.BLACK.getRGB());}//Set image to black
-                else {image.setRGB(x, y, Color.RED.getRGB());} //set image to communist red
+                else {image.setRGB(x, y, UI.SOCIALIST_RED.getRGB());} //set image to communist red
             }
         }
     }
