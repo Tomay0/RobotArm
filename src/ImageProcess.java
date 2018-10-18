@@ -256,7 +256,7 @@ public class ImageProcess {
                 return optimizedLine;
             }
         }else splitIndex = line.size()/2;//set the split index as halfway through
-
+        //Commit farming
         //Split the line segments in half at "splitIndex"
         List<Point> optimizedLine = new ArrayList<>();
         List<Point> half1 = new ArrayList<>();
