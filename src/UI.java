@@ -31,8 +31,10 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private static final int SIMULATION_SIZE = 500;
 
     /*Color Constants*/
+    /*
     public static final Color SOCIALIST_RED = new Color(205, 0, 0);
     public static final Color SOCIALIST_YELLOW = new Color(255, 216, 0);
+    */
     public static final Color DARK_GREY = new Color(45, 43, 43);
 
     //UI STUFF
@@ -150,8 +152,8 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         addMenuItem(optionsMenu,"Motor Constants","Set Motor Constants");
 
         addMenuItem(customizeMenu,"Dark theme :)","Enable Dark Theme");
-        addMenuItem(customizeMenu,"Light Theme :)","Enable Light Theme");
-        addMenuItem(customizeMenu,"Socialist Theme :D","Enable Socialist Theme");
+        addMenuItem(customizeMenu,"Light Theme D:","Enable Light Theme");
+        //addMenuItem(customizeMenu,"Socialist Theme :D","Enable Socialist Theme");
     }
 
     /**
@@ -173,7 +175,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         else if(command.equals("Save"))saveFile();
         else if(command.equals("Enable Dark Theme"))enableDarkTheme();
         else if(command.equals("Enable Light Theme")) enableLightTheme();
-        else if(command.equals("Enable Socialist Theme"))enableSocialistTheme();
+        //else if(command.equals("Enable Socialist Theme"))enableSocialistTheme();
         else if(command.equals("Run Sim"))runSim();
         else if(command.equals("Draw Circle")){
             drawing = new Drawing();
@@ -349,20 +351,18 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         simulation.redraw();
     }
 
-    /*Potentially redundant*/
+    /*
     public void enableSocialistTheme(){
 
         for(JPanel panel : panelSet){
             panel.setBackground(SOCIALIST_RED);
 
-            /*Turning border title color white*/
             TitledBorder newBorder = (TitledBorder) panel.getBorder(); //panel.getBorder() returns Border type - need to cast to TitledBorder type
             newBorder.setTitleColor(SOCIALIST_YELLOW);
             panel.setBorder(newBorder);
             textOutputArea.append("OUR UI\n");
         }
 
-        /*Changing the color of the text area*/
         textOutputAreaScroll.setBackground(SOCIALIST_RED);
         TitledBorder newTextAreaBorder = (TitledBorder) textOutputAreaScroll.getBorder();
         newTextAreaBorder.setTitleColor(SOCIALIST_YELLOW);
@@ -376,6 +376,7 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         theme = 3;
         simulation.redraw();
     }
+    */
 
     /**
      * Create a drawing from the loaded image and update the simulation
