@@ -22,7 +22,7 @@ public class ImageProcess {
 
    /**
      * Process an image
-     */ /***/
+     */
     public ImageProcess(File file) {
         try {
             load(file);//load image

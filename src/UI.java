@@ -1,6 +1,3 @@
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -33,10 +30,10 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     private static final int TEXT_OUT_PANEL_HEIGHT = DISPLAY_PANEL_HEIGHT/5;
     private static final int SIMULATION_SIZE = 500;
 
-    /*Potentially REDundant (tbd)*/
+    /*Color Constants*/
     public static final Color SOCIALIST_RED = new Color(205, 0, 0);
     public static final Color SOCIALIST_YELLOW = new Color(255, 216, 0);
-    private AudioStream beautifulAnthem;
+    public static final Color DARK_GREY = new Color(45, 43, 43);
 
     //UI STUFF
     private JPanel menuPanel; //holds buttons and other stuff (tbd)
@@ -301,26 +298,25 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
     public void enableDarkTheme(){
 
         for(JPanel panel : panelSet) {
-            panel.setBackground(Color.black);
+            panel.setBackground(DARK_GREY);
             TitledBorder newBorder = (TitledBorder) panel.getBorder();//panel.getBorder() returns Border type - need to cast to TitledBorder type
             newBorder.setTitleColor(Color.white);
             panel.setBorder(newBorder);
         }
 
         /*Changing the color of the text area*/
-        textOutputAreaScroll.setBackground(Color.black);
+        textOutputAreaScroll.setBackground(DARK_GREY);
         TitledBorder newTextAreaBorder = (TitledBorder) textOutputAreaScroll.getBorder();
         newTextAreaBorder.setTitleColor(Color.white);
         textOutputAreaScroll.setBorder(newTextAreaBorder);
         textOutputAreaScroll.setForeground(Color.white); //Changes text color
         textOutputArea.setForeground(Color.white);
-        textOutputArea.setBackground(Color.black);
+        textOutputArea.setBackground(DARK_GREY);
         origPic.setForeground(Color.white);
         edgePic.setForeground(Color.white);
 
         theme = 2;
         simulation.redraw();
-        stopAnthem();
     }
 
     /**
@@ -351,8 +347,6 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
         theme = 1;
         simulation.redraw();
-        stopAnthem();
-
     }
 
     /*Potentially redundant*/
@@ -381,8 +375,6 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
 
         theme = 3;
         simulation.redraw();
-        playAnthem();
-
     }
 
     /**
@@ -407,31 +399,9 @@ public class UI extends JFrame implements ActionListener, ChangeListener {
         textOutputArea.append("Created drawing from image with " + simulation.getNumberOfLines() + " lines and " + controlCount + " control signals.\nEstimated drawing time of at least least " + m + ":" + s + "\n");
     }
 
-    /**
-     * EXTREMELY IMPORTANT METHOD: Plays the USSR National Anthem
-     * */
-    public void playAnthem(){
-        InputStream входПоток;
-        try{
-            входПоток = new FileInputStream("anthem.wav");
-            beautifulAnthem = new AudioStream(входПоток);
-            AudioPlayer.player.start(beautifulAnthem);
-        }catch(Exception e){e.printStackTrace();}
-    }
-
-    /**
-     * Stops playing the anthem :(
-     * */
-    public void stopAnthem(){
-        try {
-            if (beautifulAnthem != null)AudioPlayer.player.stop(beautifulAnthem);
-        }catch(Exception e){e.printStackTrace();}
-    }
-
     /*Getters*/
     public int getTheme(){
         return theme;
-
     }
 
     public static void main(String[] args) {

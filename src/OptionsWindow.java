@@ -18,7 +18,7 @@ public class OptionsWindow extends JFrame implements ActionListener {
     private UI ui;
     private JButton okButton,closeButton;
     private JPanel mainPanel;
-    private static final int OPTIONS_WINDOW_WIDTH = 600;
+    private static final int OPTIONS_WINDOW_WIDTH = 300;
     private static final int OPTIONS_WINDOW_HEIGHT = 400;
     private static final int BUTTON_WIDTH = 100;
     private static final int BUTTON_HEIGHT = 30;

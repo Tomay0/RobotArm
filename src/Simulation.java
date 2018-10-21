@@ -24,7 +24,7 @@ public class Simulation implements Runnable{
 
         /*Determining line color*/
         int theme = ui.getTheme();
-        if(theme == 1)lineCol = new Color(Color.BLACK.getRGB());
+        if(theme == 1)lineCol = new Color(UI.DARK_GREY.getRGB());
         else if(theme == 2)lineCol = new Color(Color.WHITE.getRGB());
         else lineCol = new Color(Color.YELLOW.getRGB());
 
@@ -55,7 +55,7 @@ public class Simulation implements Runnable{
             for(int y = 0;y<size;y++) {
                 if(ui.getTheme() == 1) {
                     image.setRGB(x, y, Color.WHITE.getRGB());//set image to blank white
-                }else if(ui.getTheme() == 2) {image.setRGB(x, y, Color.BLACK.getRGB());}//Set image to black
+                }else if(ui.getTheme() == 2) {image.setRGB(x, y, UI.DARK_GREY.getRGB());}//Set image to black
                 else {image.setRGB(x, y, UI.SOCIALIST_RED.getRGB());} //set image to communist red
             }
         }
